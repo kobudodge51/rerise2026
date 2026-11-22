@@ -674,3 +674,78 @@ td.name .pf{margin-left:2px}
 .kc-hero .sp-thx b{color:#FFE27A}
 .kc-slot{display:grid;place-content:center;gap:4px;text-align:center;background:repeating-linear-gradient(-45deg,rgba(246,184,0,.12) 0 10px,transparent 10px 20px),var(--surface);border:1.5px dashed var(--gold)}
 .kc-slot span{font-weight:700;font-size:13px;color:var(--red)}.kc-slot small{font-size:10.5px;color:var(--muted);line-height:1.4}
+
+/* ==========================================================
+   Re:RISE パンフレットの世界観（エメラルド → クリムゾン、金の光、雪の結晶）
+   ========================================================== */
+:root{
+  --red:#C8102E;--red2:#8E0B1E;--green:#0B7A3E;--green2:#06512A;--navy:#0A5A30;--navy2:#05371F;--gold:#F4C542;--teal:#12A4A0;
+  --court-a:#C8102E;--court-b:#0B7A3E;--of:#0A5A30;--win:#C8102E;--path-win:#C8102E;
+  --bg:#FFF8EC;--surface2:#FBF1DF;--line:#EEDDBE;--ink:#1D2A20;--muted:#6E705F;
+  --rr-grad:linear-gradient(160deg,#0E8A45 0%,#0A5A30 38%,#7E0D1C 72%,#C8102E 100%);
+  --rr-grad-h:linear-gradient(100deg,#06512A 0%,#0B7A3E 30%,#8E0B1E 75%,#C8102E 100%);
+  --rr-glow:radial-gradient(60% 55% at 55% 45%,rgba(255,214,102,.45) 0%,rgba(255,214,102,.12) 40%,transparent 70%);
+  --shadow:0 1px 0 rgba(255,255,255,.8) inset,0 8px 22px rgba(80,20,10,.10);
+}
+:root[data-theme="dark"]{
+  --bg:#061D12;--surface:#10261A;--surface2:#183323;--ink:#FFF6E6;--muted:#C2C7B4;--line:#2D4A37;--path-none:#2F5A43;
+  --shadow:0 10px 26px rgba(0,0,0,.5);
+}
+/* 背景：左上にエメラルド、右下にクリムゾンの光。金の粒と雪 */
+body{background:
+  radial-gradient(1.8px 1.8px at 18px 26px,rgba(244,197,66,.55) 98%,transparent) 0 0/96px 96px,
+  radial-gradient(2.4px 2.4px at 66px 70px,rgba(255,255,255,.95) 98%,transparent) 0 0/96px 96px,
+  radial-gradient(70% 45% at 0% 0%,rgba(11,122,62,.16),transparent 70%) fixed,
+  radial-gradient(70% 45% at 100% 100%,rgba(200,16,46,.14),transparent 70%) fixed,
+  var(--bg)}
+:root[data-theme="dark"] body{background:
+  radial-gradient(1.6px 1.6px at 20px 30px,rgba(255,226,140,.8) 98%,transparent) 0 0/110px 110px,
+  radial-gradient(1.2px 1.2px at 75px 80px,rgba(255,255,255,.7) 98%,transparent) 0 0/110px 110px,
+  radial-gradient(60% 40% at 50% 35%,rgba(255,200,90,.10),transparent 70%) fixed,
+  linear-gradient(165deg,#0B5A31 0%,#06351E 40%,#3E0810 80%,#5E0C18 100%) fixed}
+/* ヘッダー：パンフレットのグラデーション＋金のライン */
+header.top,:root[data-theme="dark"] header.top{background:var(--rr-grad-h);box-shadow:0 6px 20px rgba(60,10,10,.25)}
+header.top::after{height:3px;inset:auto 0 -3px;background:linear-gradient(90deg,transparent,#F4C542 15%,#FFF1B8 50%,#F4C542 85%,transparent)}
+.hd-ttl,:root[data-theme="dark"] .hd-ttl{color:#fff;text-shadow:0 0 10px rgba(255,214,102,.45),0 2px 4px rgba(0,0,0,.3)}
+.hd-ttl span,:root[data-theme="dark"] .hd-ttl span{color:#FFD66B}
+.top .meta{color:rgba(255,255,255,.85)}
+.top .visits{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}.top .visits b{color:#FFD66B}
+.themesw{background:rgba(0,0,0,.18);border-color:rgba(255,255,255,.25)}.themesw button{color:rgba(255,255,255,.8)}
+.themesw button[aria-pressed="true"],:root[data-theme="dark"] .themesw button[aria-pressed="true"]{background:#F4C542;color:#5A0A14}
+body::before{background:#06512A}
+/* 表紙カード：パンフレットそのままの色 */
+.cover,:root[data-theme="dark"] .cover{background:var(--rr-glow),var(--rr-grad);color:#fff;border:2px solid rgba(244,197,66,.75);box-shadow:0 0 0 4px rgba(244,197,66,.15),0 16px 36px rgba(80,10,20,.35)}
+.cover::before{height:3px;background:linear-gradient(90deg,transparent,#F4C542 20%,#FFF1B8 50%,#F4C542 80%,transparent)}
+.rr-ttl small{color:#FFD66B}
+.rr-ttl b{color:#fff;text-shadow:0 0 14px rgba(255,214,102,.55),0 3px 6px rgba(0,0,0,.35)}
+.rr-ttl span{color:#FFD66B}
+.cover .art{box-shadow:0 0 0 2px rgba(244,197,66,.8),0 12px 26px rgba(0,0,0,.45)}
+.cover dt{color:#FFD66B}.cover dd{color:#fff}
+.count{background:rgba(0,0,0,.25);border:1px solid rgba(244,197,66,.7);color:#fff}.count b{color:#FFD66B}
+/* 区切り・見出し */
+.break{background:var(--rr-glow),var(--rr-grad-h);border:1px solid rgba(244,197,66,.6)}
+.break small{color:#FFE9B0}
+.stagehead::before,.stagehead::after{height:2px;background:linear-gradient(90deg,var(--green),#F4C542 50%,var(--red))}
+.stagehead::after{background:linear-gradient(90deg,var(--red),#F4C542 50%,var(--green))}
+.time{color:var(--green2)}:root[data-theme="dark"] .time{color:#FFD66B}
+.flow b{color:var(--red)}:root[data-theme="dark"] .flow b{color:#FFD66B}
+.courthead .a{background:linear-gradient(135deg,#E0263F,#9E0C1F)}.courthead .b{background:linear-gradient(135deg,#12974D,#06512A)}
+.btn.primary{background:linear-gradient(135deg,#E0263F,#9E0C1F);border-color:#9E0C1F;box-shadow:0 6px 16px rgba(200,16,46,.3)}
+/* 下のメニュー：深い緑＋金 */
+.bottomnav,:root[data-theme="dark"] .bottomnav{background:linear-gradient(180deg,#0A5A30,#05371F);border-top:0}
+.bottomnav::before{height:3px;inset:-3px 0 auto;background:linear-gradient(90deg,#C8102E,#F4C542 30%,#FFF1B8 50%,#F4C542 70%,#C8102E)}
+.bottomnav button{color:rgba(255,255,255,.72)}
+.bottomnav button[aria-current="page"],:root[data-theme="dark"] .bottomnav button[aria-current="page"]{color:#FFD66B}
+/* 結果・協賛のヒーロー */
+.rs-hero,.sp-hero{background:var(--rr-glow),var(--rr-grad);border:2px solid rgba(244,197,66,.7)}
+.rs-hero::after,.sp-hero::after{height:3px;background:linear-gradient(90deg,transparent,#F4C542 20%,#FFF1B8 50%,#F4C542 80%,transparent)}
+.sp-cat{background:linear-gradient(135deg,#0A5A30,#8E0B1E)}
+.adminbar{background:linear-gradient(90deg,#8E0B1E,#C8102E)}
+/* オープニング */
+#intro{background:radial-gradient(55% 40% at 50% 42%,rgba(255,214,102,.35),transparent 70%),linear-gradient(160deg,#0E8A45 0%,#0A5A30 38%,#7E0D1C 72%,#C8102E 100%)}
+#intro .when b{color:#FFD66B}
+:root[data-theme="dark"]{background:#061D12}
+:root[data-theme="dark"] .sc{color:#6F8A78}
+:root[data-theme="dark"] .row.w .sc{color:#FF6F7D}
+:root[data-theme="dark"] .sp-co em{color:#7FD9A0}
+:root[data-theme="dark"] .kc-slot span{color:#FFD66B}
