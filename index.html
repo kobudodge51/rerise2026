@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Re:RISE CUP 2026 速報</title>
+<meta name="description" content="第4回 2026 Re:RISE CUP（2026年11月23日・飯田市鼎体育館）U-15部門の試合進行・予選リーグ・決勝トーナメント速報">
+<meta name="theme-color" content="#0B4A2E">
+<meta property="og:title" content="Re:RISE CUP 2026 速報">
+<meta property="og:description" content="2026年11月23日（月・祝）飯田市鼎体育館｜試合進行・予選リーグ・決勝トーナメントをリアルタイムでお届け">
+<meta property="og:image" content="img/cover.webp">
+<script>(function(){var t=null;try{t=localStorage.getItem('rr-theme')}catch(e){}if(t!=='dark'&&t!=='light'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}document.documentElement.setAttribute('data-theme',t)})();</script>
+<script>
+window.PK_CONFIG = {
+  SUPABASE_URL: "https://reyffxawdgpqffdygucb.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJleWZmeGF3ZGdwcWZmZHlndWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMzg5NjYsImV4cCI6MjEwNDgxNDk2Nn0.BylEdRAH45np51ENz_kJTa-1_9PElwUQsgKaz6gA9o4"
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Courier+Prime:wght@700&display=swap">
+<link rel="stylesheet" href="style.css?v=20261122a">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+<div id="intro" aria-hidden="true">
+  <div class="sky"></div><div class="snow"></div>
+  <div class="stage">
+    <div class="pic"><img src="img/cover.webp" alt="" width="967" height="1373"></div>
+    <div class="when"><b>11.23</b> MON ｜ 飯田市鼎体育館</div>
+  </div>
+  <div class="burst"></div>
+  <button type="button" class="skip">SKIP ▸</button>
+</div>
+<script>(function(){var el=document.getElementById('intro');if(!el)return;var R=Math.random,i,h='';
+for(i=0;i<46;i++)h+='<i class="'+(i%5===0?'s':'')+'" style="left:'+(R()*100).toFixed(1)+'%;top:'+(R()*100).toFixed(1)+'%;width:'+(1+R()*2.6).toFixed(1)+'px;height:'+(1+R()*2.6).toFixed(1)+'px;--t:'+(1.6+R()*2.4).toFixed(2)+'s;--dl:-'+(R()*3).toFixed(2)+'s"></i>';
+el.querySelector('.sky').innerHTML=h;h='';
+for(i=0;i<38;i++){var z=(3+R()*6).toFixed(1);h+='<i style="left:'+(R()*100).toFixed(1)+'%;width:'+z+'px;height:'+z+'px;opacity:'+(.45+R()*.5).toFixed(2)+';--t:'+(6+R()*7).toFixed(1)+'s;--dl:-'+(R()*10).toFixed(1)+'s;--dx:'+(R()*80-40).toFixed(0)+'px"></i>'}
+el.querySelector('.snow').innerHTML=h;h='';
+for(i=0;i<14;i++){var a=i/14*Math.PI*2,d=120+R()*110;h+='<i style="--bx:'+(Math.cos(a)*d).toFixed(0)+'px;--by:'+(Math.sin(a)*d).toFixed(0)+'px;width:'+(10+R()*14).toFixed(0)+'px;height:'+(10+R()*14).toFixed(0)+'px"></i>'}
+el.querySelector('.burst').innerHTML=h;
+document.documentElement.style.overflow='hidden';var done=false,started=false;
+function end(){if(done)return;done=true;el.classList.add('out');document.documentElement.style.overflow='';setTimeout(function(){el.remove()},900)}
+el.addEventListener('click',end);
+function go(){if(started)return;started=true;el.classList.add('go');setTimeout(end,4300)}
+var ims=el.querySelectorAll('img'),n=0;function one(){if(++n>=ims.length)go()}
+for(i=0;i<ims.length;i++){if(ims[i].complete)one();else{ims[i].onload=one;ims[i].onerror=one}}
+setTimeout(go,1500);setTimeout(end,8000)})();</script>
+<div id="app"></div>
+<script src="app.js?v=20261122a"></script>
+</body>
+</html>
