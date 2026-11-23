@@ -917,3 +917,7 @@ td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
 .pz-board.noghost.win img{display:block;opacity:1}
 .pz-peek img{width:auto;max-width:86vw;max-height:76vh}
 .pz-lvbtn.p2 .st{font-size:11px;max-width:4.6em;word-break:break-all;line-break:anywhere}
+.kc-live{position:relative;border-radius:12px;overflow:hidden;border:2px solid #F4C542;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.kc-live img{display:block;width:100%;height:auto}
+.kc-live span{position:absolute;left:8px;top:8px;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(90deg,#C8102E,#8E0B1E);border:1px solid rgba(244,197,66,.8);border-radius:999px;padding:3px 10px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.kc-card .kc-img.sub img{max-height:200px}
