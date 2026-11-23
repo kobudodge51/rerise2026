@@ -749,3 +749,16 @@ body::before{background:#06512A}
 :root[data-theme="dark"] .row.w .sc{color:#FF6F7D}
 :root[data-theme="dark"] .sp-co em{color:#7FD9A0}
 :root[data-theme="dark"] .kc-slot span{color:#FFD66B}
+/* 都道府県チップ（試合カード） */
+.pfc{--c:#888;display:inline-flex;align-items:center;margin-left:5px;padding:1.5px 6px 1px;border-radius:999px;font-style:normal;font-size:9.5px;font-weight:700;line-height:1.2;letter-spacing:.04em;white-space:nowrap;vertical-align:2px;
+  color:var(--c);background:color-mix(in srgb,var(--c) 13%,#fff);border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+:root[data-theme="dark"] .pfc{color:color-mix(in srgb,var(--c) 55%,#fff);background:color-mix(in srgb,var(--c) 28%,#10261A);border-color:color-mix(in srgb,var(--c) 60%,transparent)}
+.pf-osaka{--c:#8E44AD}.pf-toyama{--c:#1E88E5}.pf-aichi{--c:#E8730C}.pf-gifu{--c:#0E9F8E}.pf-nagano{--c:#D81B60}.pf-niigata{--c:#8B5A2B}
+.row.w .pfc{font-weight:700}
+.tn:has(.pfc){display:flex;align-items:center;gap:0;min-width:0}
+.tn:has(.pfc) small{flex:none}
+.tn .nm{min-width:0;overflow-wrap:anywhere}
+.tn .pfc{flex:none;margin-left:4px;padding:1px 5px .5px;font-size:9px;letter-spacing:.02em}
+@container (max-width:200px){.tn:has(.pfc){font-size:12.5px;letter-spacing:-.01em}.tn small{margin-right:3px}.tn .pfc{margin-left:3px;padding:1px 4px .5px;font-size:8.5px}}
+.tn .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@container (max-width:200px){.tn .nm.lg{font-size:10.8px;letter-spacing:-.03em}}

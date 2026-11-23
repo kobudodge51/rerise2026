@@ -135,7 +135,9 @@ function teamOpts(){
 function seg(id,cur,items){return '<div class="seg" role="group">'+items.map(function(it){return '<button type="button" data-seg="'+id+'" data-v="'+it[0]+'" class="'+it[0].toLowerCase()+'" aria-pressed="'+(cur===it[0])+'">'+it[1]+'</button>'}).join('')+'</div>'}
 
 /* ---------- 試合進行 ---------- */
-function rowHTML(name,ph,code,s,w,ex){return '<div class="row'+(w?' w':'')+(filter&&name===filter?' hl':'')+'"><span class="tn'+(name?'':' ph')+'">'+(code?'<small>'+esc(code)+'</small>':'')+(name?esc(name):esc(ph))+'</span><span class="sc">'+(s==null?'–':s)+(ex||'')+'</span></div>'}
+var PFK={'大阪':'osaka','富山':'toyama','愛知':'aichi','岐阜':'gifu','長野':'nagano','新潟':'niigata'};
+function prefChip(n){var p=PREF[n];return p?'<i class="pfc pf-'+PFK[p]+'">'+p+'</i>':''}
+function rowHTML(name,ph,code,s,w,ex){return '<div class="row'+(w?' w':'')+(filter&&name===filter?' hl':'')+'"><span class="tn'+(name?'':' ph')+'">'+(code?'<small>'+esc(code)+'</small>':'')+(name?'<span class="nm'+(name.length>=11?' lg':'')+'">'+esc(name)+'</span>'+prefChip(name):esc(ph))+'</span><span class="sc">'+(s==null?'–':s)+(ex||'')+'</span></div>'}
 function matchHTML(m,now){
   if(!m)return '<div class="match empty">－</div>';
   var fv=m.fin?finalV(m.id):null,v=m.fin?(fv?{a:fv.a,b:fv.b,w:null}:null):mv(m),aw=m.fin&&!(fv&&fv.done)?null:winA(v);
@@ -150,8 +152,7 @@ function nextKeys(all){var n={};['A','B'].forEach(function(c){for(var i=0;i<all.
 function kcCell(){return '<div class="match empty kc-slot"><span>🍴 キッチンカータイム</span><small>このコートの審判さん、キッチンカーをご利用ください</small></div>'}
 function viewSched(C){
   var tm=tourMatches(C),all=PM.concat(tm),nx=nextKeys(all);
-  var h=cover();
-  h+='<div style="display:grid;gap:8px"><h2>試合進行表</h2><p class="note">5分1セットマッチ（決勝のみ3セットマッチ）・全試合ランニングタイム制。数字は試合終了時の内野人数です。左右はオフィシャル席から見た並びです。</p>'+
+  var h='<div style="display:grid;gap:8px"><h2>試合進行表</h2><p class="note">5分1セットマッチ（決勝のみ3セットマッチ）・全試合ランニングタイム制。数字は試合終了時の内野人数です。左右はオフィシャル席から見た並びです。</p>'+
     '<select id="team-filter" class="sel" aria-label="チームで絞り込む">'+teamOpts()+'</select></div>';
   h+='<div class="courthead" aria-hidden="true"><span class="a">Aコート</span><span class="b">Bコート</span></div>';
   h+='<div class="stagehead"><span>予選リーグ（全45試合）</span></div>';
@@ -253,7 +254,7 @@ function rmatch(m){
 function viewResult(C){
   var tm=tourMatches(C),byId={};tm.forEach(function(m){byId[m.id]=m});
   var f=C.T[FIN],t=C.T[THIRD],ch=f.win,done=!!ch;
-  var h='<section class="rs-hero"><span class="rs-k">'+(done?'FINAL RESULT':'RESULT')+'</span><h2>🏆 '+(done?'最終結果':'大会結果')+'</h2><p>第4回 2026 Re:RISE CUP（U-15部門）</p></section>';
+  var h=cover()+'<section class="rs-hero"><span class="rs-k">'+(done?'FINAL RESULT':'RESULT')+'</span><h2>🏆 '+(done?'最終結果':'大会結果')+'</h2><p>第4回 2026 Re:RISE CUP（U-15部門）</p></section>';
   if(!done)h+='<p class="note" style="text-align:center">決勝戦が終わると、ここに最終結果が表示されます。</p>';
   var rows=[['p2','準優勝',f.lose],['p3','3位',t.win],['p4','4位',t.lose]];
   h+='<section class="rs-col rs-one">'+champBox('優勝',ch,ch&&PREF[ch]?PREF[ch]+(PREF[ch]==='大阪'?'府':'県'):'');
