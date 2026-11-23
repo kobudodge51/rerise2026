@@ -353,7 +353,7 @@ var KC=[
  ['お食事処 夢（ハンバーグ丼の夢mama）','img/k-yume.webp','ハンバーグBOX（デミグラス・トマト・てりやき）900円・スペシャルBOX 1,500円・ハンバーグ丼・ハンバーグドッグ 600円・ミニ揚げパン 300円・タピオカドリンク 600円・ドリンク 400円 など（トッピング各＋100円）','一つ一つ手作り！豆腐・おから入りのふわふわハンバーグ','img/k-yume-live.webp'],
  ['お好み焼 4resT（ふぉれすと）','img/k-4rest.webp','豚焼そば 600円 など','鉄板で焼きたての焼そば','img/k-4rest-live.webp'],
  ['RyoTheSea','img/k-ryo.webp','プルドポークバーガー 800円・チーズバーガー 700円・フランクフルト 300円・アイスコーヒー 300円・カフェラテ 350円 など','STANDARD HOT DOG AND BURGER','img/k-ryo-live.webp'],
- ['本格手打ち そば道楽','img/k-soba.webp','本格手打ちそば など','本格手打ち']
+ ['本格手打ち そば道楽','img/k-soba.webp','からあげ 500円・五平餅（ごへいもち）1本 200円 など ※本日はおそばの販売はありません','揚げたてからあげ＆信州名物の五平餅','img/k-soba-live.webp']
 ];
 function viewSpon(){
   var h='<section class="sp-hero kc-hero"><small>第4回 2026 Re:RISE CUP</small><h2 class="sp-t">FOOD CORNER</h2><p>キッチンカー出店のご案内</p><p class="sp-thx">📍 <b>第3駐車場</b>に出店します。沢山食べて、さらにパワーアップ‼</p></section>';
