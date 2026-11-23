@@ -893,3 +893,27 @@ td.rk .rkn{line-height:1}
 td.rk .pfc{margin-top:2px}
 td.name .lnm.lg{font-size:.78em;letter-spacing:-.03em}
 td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
+/* パズル② 追加 */
+.pz-photos{display:flex;align-items:flex-end;justify-content:center;gap:14px;margin-top:10px;width:100%}
+.pz-photos .pz-photo{margin-top:0;width:min(46%,200px)}
+.pz-photos .pz-photo.tall{width:min(34%,150px);aspect-ratio:1000/1600;transform:rotate(4deg)}
+.pz-photo.tall::after{background:
+  linear-gradient(90deg,transparent calc(25% - 1px),rgba(255,255,255,.7) 25%,transparent calc(25% + 1px),transparent calc(50% - 1px),rgba(255,255,255,.7) 50%,transparent calc(50% + 1px),transparent calc(75% - 1px),rgba(255,255,255,.7) 75%,transparent calc(75% + 1px)),
+  repeating-linear-gradient(0deg,transparent 0 calc(100%/7 - 1px),rgba(255,255,255,.7) calc(100%/7 - 1px) calc(100%/7))}
+.pz-photos .pz-q{width:auto;height:auto;padding:4px 8px;border-radius:999px;font-size:12px;right:-10px;top:-10px;letter-spacing:.06em}
+.pz-set{display:grid;gap:10px;padding:12px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.pz-set-h{display:flex;align-items:center;gap:12px}
+.pz-set-h img{width:52px;height:52px;object-fit:cover;border-radius:10px;border:2px solid #F4C542;flex:none}
+.pz-set-h img.tall{height:70px;width:44px;object-position:50% 20%}
+.pz-set-h div{display:grid;gap:1px}.pz-set-h small{font-size:11px;font-weight:700;color:var(--red)}
+.pz-set-h b{font-family:var(--pop);font-weight:400;font-size:18px}.pz-set-h em{font-style:normal;font-size:11px;color:var(--muted);font-weight:700}
+.pz-lvbtn.p2{--a:#3B3B4F;--b:#14141F}.pz-lvbtn.p2.mid{--a:#7A1FA2;--b:#3E0B57}.pz-lvbtn.p2.hard{--a:#B00020;--b:#2A0006}
+.pz-lvbtn.p2 .st{font-size:10px;letter-spacing:0;line-height:1.1;max-width:6.5em;text-align:center}
+.pz-lvbtn.p2.hard{box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 18px rgba(255,60,60,.45)}
+.pz-rkp{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pz-rkp button{border:1.5px solid var(--line);background:var(--surface);color:var(--muted);font-weight:700;font-size:12.5px;border-radius:999px;padding:7px 4px;cursor:pointer}
+.pz-rkp button[aria-pressed="true"]{border-color:#F4C542;color:#fff;background:var(--rr-grad-h)}
+.pz-board.noghost img{display:none}
+.pz-board.noghost.win img{display:block;opacity:1}
+.pz-peek img{width:auto;max-width:86vw;max-height:76vh}
+.pz-lvbtn.p2 .st{font-size:11px;max-width:4.6em;word-break:break-all;line-break:anywhere}

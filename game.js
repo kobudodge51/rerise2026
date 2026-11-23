@@ -2,9 +2,13 @@
    ゲーム：中澤監督パズル（ジグソー 4×4 / 5×5 / 8×8）
    ========================================================== */
 (function(){
-var PZ_IMG='img/nakazawa.webp';
-var LV={4:{nm:'かんたん',sub:'16ピース',star:'★',c:'easy'},5:{nm:'ふつう',sub:'25ピース',star:'★★',c:'mid'},8:{nm:'むずかしい',sub:'64ピース',star:'★★★',c:'hard'}};
-var rk={4:null,5:null,8:null},rkLv=+(lsg('rr-pz-lv')||4),rkAt=0,rkBusy=false,myIds=[];
+var PZ={
+ 1:{img:'img/nakazawa.webp',w:1024,h:1024,ghost:true,title:'中澤監督パズル',sub:'どアップ編',lv:[4,5,8],cap:'うっすら見本あり'},
+ 2:{img:'img/nakazawa2.webp',w:1000,h:1600,ghost:false,title:'中澤監督パズル',sub:'腕組み全身編',lv:[47,58,69],cap:'見本の透かしなし・上級者向け'}};
+var LV={4:{p:1,c:4,r:4,nm:'かんたん',star:'★',k:'easy'},5:{p:1,c:5,r:5,nm:'ふつう',star:'★★',k:'mid'},8:{p:1,c:8,r:8,nm:'むずかしい',star:'★★★',k:'hard'},
+ 47:{p:2,c:4,r:7,nm:'上級',star:'★★★★',k:'easy'},58:{p:2,c:5,r:8,nm:'超上級',star:'★★★★★★',k:'mid'},69:{p:2,c:6,r:9,nm:'鬼',star:'★★★★★★★★',k:'hard'}};
+Object.keys(LV).forEach(function(k){var L=LV[k];L.gr=L.c+'×'+L.r;L.sub=(L.c*L.r)+'ピース'});
+var rk={},rkLv=+(lsg('rr-pz-lv')||4),rkAt=0,rkBusy=false,myIds=[];if(!LV[rkLv])rkLv=4;
 try{myIds=JSON.parse(localStorage.getItem('rr-pz-my')||'[]')}catch(e){}
 function lsg(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function lss(k,v){try{localStorage.setItem(k,v)}catch(e){}}
@@ -18,7 +22,7 @@ function loadRank(force){
   if(!window.RR||!RR.sb()||rkBusy){if(!window.RR)setTimeout(function(){loadRank(true)},300);return}if(!force&&Date.now()-rkAt<15000)return;
   rkBusy=true;
   RR.sb().from('rr26_puzzle').select('id,lv,name,team,ms,created_at').order('ms',{ascending:true}).limit(2000).then(function(r){
-    rkBusy=false;if(r.error){console.error(r.error);rk={4:rk[4]||[],5:rk[5]||[],8:rk[8]||[]};rk.err=true}else{rk={4:[],5:[],8:[]};(r.data||[]).forEach(function(x){if(rk[x.lv])rk[x.lv].push(x)})}
+    rkBusy=false;if(r.error){console.error(r.error);Object.keys(LV).forEach(function(k){rk[k]=rk[k]||[]});rk.err=true}else{rk={};Object.keys(LV).forEach(function(k){rk[k]=[]});(r.data||[]).forEach(function(x){if(rk[x.lv])rk[x.lv].push(x)})}
     rkAt=Date.now();if(RR.tab()==='game'&&!document.querySelector('.pz-layer'))RR.render();
   },function(){rkBusy=false});
 }
@@ -36,10 +40,15 @@ window.viewGame=function(){
   loadRank();
   var h='<section class="pz-hero"><div class="pz-snow" aria-hidden="true">'+'❄❅❆✦❄✦❅❆'.split('').map(function(c,i){return '<i style="left:'+(6+i*12)+'%;animation-delay:-'+(i*1.3)+'s">'+c+'</i>'}).join('')+'</div>'+
    '<span class="pz-k">CHRISTMAS GAME</span><h2>🧩 中澤監督パズル</h2><p>バラバラになった中澤監督を、いちばん早く元に戻せるのは誰だ!?</p>'+
-   '<div class="pz-photo"><img src="'+PZ_IMG+'" alt="中澤監督の写真" width="1024" height="1024"><span class="pz-q">？</span></div></section>';
-  h+='<h2 style="margin-top:4px">難易度をえらぶ</h2><div class="pz-lv">'+[4,5,8].map(function(n){var L=LV[n];return '<button type="button" class="pz-lvbtn '+L.c+'" data-pzstart="'+n+'"><span class="st">'+L.star+'</span><b>'+L.nm+'</b><span class="gr"><i>'+n+'×'+n+'</i>'+L.sub+'</span><span class="go">スタート ▶</span></button>'}).join('')+'</div>';
+   '<div class="pz-photos"><div class="pz-photo"><img src="'+PZ[1].img+'" alt="中澤監督 どアップ" width="1024" height="1024"></div><div class="pz-photo tall"><img src="'+PZ[2].img+'" alt="中澤監督 腕組み全身" width="1000" height="1600"><span class="pz-q">NEW</span></div></div></section>';
+  [1,2].forEach(function(pn){var P=PZ[pn];
+    h+='<section class="pz-set"><div class="pz-set-h"><img src="'+P.img+'" alt="" class="'+(pn===2?'tall':'')+'"><div><small>パズル'+(pn===1?'①':'②')+'</small><b>'+P.sub+'</b><em>'+P.cap+'</em></div></div>'+
+     '<div class="pz-lv">'+P.lv.map(function(n){var L=LV[n];return '<button type="button" class="pz-lvbtn '+L.k+(pn===2?' p2':'')+'" data-pzstart="'+n+'"><span class="st">'+L.star+'</span><b>'+L.nm+'</b><span class="gr"><i>'+L.gr+'</i>'+L.sub+'</span><span class="go">スタート ▶</span></button>'}).join('')+'</div></section>';
+  });
   h+='<p class="note">ピースを指（マウス）でドラッグして、正しい場所に近づけるとピタッとはまります。完成までのタイムでランキングに挑戦！</p>';
-  h+='<div class="card pz-rkcard"><h3>🏆 ランキング</h3><div class="pz-rktabs" role="tablist">'+[4,5,8].map(function(n){return '<button type="button" role="tab" data-pzrk="'+n+'" aria-selected="'+(rkLv===n)+'" class="'+LV[n].c+'">'+LV[n].nm+'<small>'+n+'×'+n+'（'+(rk[n]?rk[n].length:'-')+'人）</small></button>'}).join('')+'</div>'+rankHTML(rkLv,lastId)+'</div>';
+  var cp=LV[rkLv].p;
+  h+='<div class="card pz-rkcard"><h3>🏆 ランキング</h3><div class="pz-rkp">'+[1,2].map(function(pn){return '<button type="button" data-pzrk="'+PZ[pn].lv[0]+'" aria-pressed="'+(cp===pn)+'">'+(pn===1?'①':'②')+' '+PZ[pn].sub+'</button>'}).join('')+'</div>'+
+   '<div class="pz-rktabs" role="tablist">'+PZ[cp].lv.map(function(n){return '<button type="button" role="tab" data-pzrk="'+n+'" aria-selected="'+(rkLv===n)+'" class="'+LV[n].k+'">'+LV[n].nm+'<small>'+LV[n].gr+'（'+(rk[n]?rk[n].length:'-')+'人）</small></button>'}).join('')+'</div>'+rankHTML(rkLv,lastId)+'</div>';
   return h;
 };
 
@@ -54,61 +63,63 @@ function edge(p,x0,y0,x1,y1,d,s){
   TPL.forEach(function(c){var q1=P(c[0],c[1]),q2=P(c[2],c[3]),q3=P(c[4],c[5]);p.bezierCurveTo(q1[0],q1[1],q2[0],q2[1],q3[0],q3[1])});
   p.lineTo(x1,y1);
 }
-function piecePath(pc,s,pad){
+function piecePath(pc,w,h,pad){
   var p=new Path2D(),x=pad,y=pad;p.moveTo(x,y);
-  edge(p,x,y,x+s,y,pc.t,s);edge(p,x+s,y,x+s,y+s,pc.r,s);edge(p,x+s,y+s,x,y+s,pc.b,s);edge(p,x,y+s,x,y,pc.l,s);p.closePath();return p;
+  edge(p,x,y,x+w,y,pc.t,w);edge(p,x+w,y,x+w,y+h,pc.r,h);edge(p,x+w,y+h,x,y+h,pc.b,w);edge(p,x,y+h,x,y,pc.l,h);p.closePath();return p;
 }
 
 /* ---------- プレイ ---------- */
-var G=null,lastId=null,img=new Image();img.src=PZ_IMG;
+var G=null,lastId=null,IMGS={};
+[1,2].forEach(function(pn){var im=new Image();im.src=PZ[pn].img;IMGS[pn]=im});
 var testCtx=document.createElement('canvas').getContext('2d');
 
 function start(n){
-  if(G)return;
+  if(G||!LV[n])return;
+  var L0=LV[n],P=PZ[L0.p],img=IMGS[L0.p];
   if(!img.complete){img.onload=function(){img.onload=null;start(n)};return}
   lss('rr-pz-lv',n);rkLv=n;
   var L=document.createElement('div');L.className='pz-layer';L.innerHTML=
-   '<div class="pz-bar"><button type="button" class="pz-x" data-pzq>✕ やめる</button><div class="pz-tm"><small>'+LV[n].nm+' '+n+'×'+n+'</small><b id="pz-time">0:00.0</b></div><div class="pz-cnt"><b id="pz-done">0</b>/'+(n*n)+'</div><button type="button" class="pz-eye" data-pzeye>👀 見本</button></div>'+
-   '<div class="pz-stage" id="pz-stage"><div class="pz-board" id="pz-board"><img src="'+PZ_IMG+'" alt=""></div><div class="pz-tray" id="pz-tray"><span>ピース置き場</span></div></div>'+
-   '<div class="pz-peek" id="pz-peek" hidden><img src="'+PZ_IMG+'" alt="見本"><small>タップで閉じる</small></div>'+
+   '<div class="pz-bar"><button type="button" class="pz-x" data-pzq>✕ やめる</button><div class="pz-tm"><small>'+L0.nm+' '+L0.gr+'</small><b id="pz-time">0:00.0</b></div><div class="pz-cnt"><b id="pz-done">0</b>/'+(L0.c*L0.r)+'</div><button type="button" class="pz-eye" data-pzeye>👀 見本</button></div>'+
+   '<div class="pz-stage" id="pz-stage"><div class="pz-board'+(P.ghost?'':' noghost')+'" id="pz-board"><img src="'+P.img+'" alt=""></div><div class="pz-tray" id="pz-tray"><span>ピース置き場</span></div></div>'+
+   '<div class="pz-peek" id="pz-peek" hidden><img src="'+P.img+'" alt="見本"><small>タップで閉じる</small></div>'+
    '<div class="pz-cd" id="pz-cd"></div>';
   document.body.appendChild(L);document.documentElement.classList.add('pz-on');
-  G={n:n,L:L,pieces:[],done:0,t0:0,t1:0,run:false,z:10,finished:false};
+  G={n:n,cols:L0.c,rows:L0.r,asp:P.w/P.h,im:img,L:L,pieces:[],done:0,t0:0,t1:0,run:false,z:10,finished:false};
   layout();build();intro();
 }
 function layout(){
-  var st=document.getElementById('pz-stage'),W=st.clientWidth,H=st.clientHeight,n=G.n,B,bx,by,tx,ty,tw,th,land=W>H*1.05;
-  if(land){B=Math.min(H-20,W*0.56);bx=12;by=(H-B)/2;tx=bx+B+14;ty=10;tw=W-tx-10;th=H-20}
-  else{B=Math.min(W-24,(H-24)*0.6);bx=(W-B)/2;by=10;tx=8;ty=by+B+14;tw=W-16;th=H-ty-8}
-  G.B=B;G.bx=bx;G.by=by;G.s=B/n;G.pad=G.s*0.3;G.tray={x:tx,y:ty,w:tw,h:th};G.W=W;G.H=H;
-  var bd=document.getElementById('pz-board');bd.style.cssText='left:'+bx+'px;top:'+by+'px;width:'+B+'px;height:'+B+'px';
+  var st=document.getElementById('pz-stage'),W=st.clientWidth,H=st.clientHeight,a=G.asp,bw,bh,bx,by,tx,ty,tw,th,land=W>H*1.05;
+  if(land){bh=Math.min(H-20,W*0.56/a);bw=bh*a;bx=12;by=(H-bh)/2;tx=bx+bw+14;ty=10;tw=W-tx-10;th=H-20}
+  else{var mh=(H-24)*(a<1?0.64:0.6);bw=Math.min(W-24,mh*a);bh=bw/a;bx=(W-bw)/2;by=10;tx=8;ty=by+bh+14;tw=W-16;th=H-ty-8}
+  G.bw=bw;G.bh=bh;G.bx=bx;G.by=by;G.sw=bw/G.cols;G.sh=bh/G.rows;G.s=Math.min(G.sw,G.sh);G.pad=Math.max(G.sw,G.sh)*0.3;G.tray={x:tx,y:ty,w:tw,h:th};G.W=W;G.H=H;
+  var bd=document.getElementById('pz-board');bd.style.cssText='left:'+bx+'px;top:'+by+'px;width:'+bw+'px;height:'+bh+'px';
   var tr=document.getElementById('pz-tray');tr.style.cssText='left:'+tx+'px;top:'+ty+'px;width:'+tw+'px;height:'+th+'px';
 }
 function draw(pc,shadow){
-  var s=G.s,pad=G.pad,S=s+pad*2,dpr=Math.min(2,window.devicePixelRatio||1),c=pc.el,x=c.getContext('2d');
-  c.width=Math.round(S*dpr);c.height=Math.round(S*dpr);c.style.width=S+'px';c.style.height=S+'px';
-  x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,S,S);
+  var s=G.s,pad=G.pad,SW=G.sw+pad*2,SH=G.sh+pad*2,dpr=Math.min(2,window.devicePixelRatio||1),c=pc.el,x=c.getContext('2d'),img=G.im;
+  c.width=Math.round(SW*dpr);c.height=Math.round(SH*dpr);c.style.width=SW+'px';c.style.height=SH+'px';
+  x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,SW,SH);
   if(shadow){x.save();x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=s*0.12;x.shadowOffsetY=s*0.05;x.fillStyle='#000';x.fill(pc.path);x.restore()}
-  x.save();x.clip(pc.path);x.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,pad-pc.c*s,pad-pc.r*s,G.B,G.B);
-  var g=x.createLinearGradient(0,0,S,S);g.addColorStop(0,'rgba(255,255,255,.18)');g.addColorStop(.5,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.14)');x.fillStyle=g;x.fill(pc.path);x.restore();
+  x.save();x.clip(pc.path);x.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,pad-pc.c*G.sw,pad-pc.r*G.sh,G.bw,G.bh);
+  var g=x.createLinearGradient(0,0,SW,SH);g.addColorStop(0,'rgba(255,255,255,.18)');g.addColorStop(.5,'rgba(255,255,255,0)');g.addColorStop(1,'rgba(0,0,0,.14)');x.fillStyle=g;x.fill(pc.path);x.restore();
   x.lineWidth=Math.max(1,s*0.025);x.strokeStyle=shadow?'rgba(255,255,255,.55)':'rgba(255,255,255,.18)';x.stroke(pc.path);
 }
 function build(){
-  var n=G.n,H=[],V=[],r,c,st=document.getElementById('pz-stage');
-  for(r=0;r<n;r++){H[r]=[];V[r]=[];for(c=0;c<n;c++){H[r][c]=Math.random()<.5?1:-1;V[r][c]=Math.random()<.5?1:-1}}
-  for(r=0;r<n;r++)for(c=0;c<n;c++){
-    var p2={row:r,col:c,t:r?-H[r-1][c]:0,b:r<n-1?H[r][c]:0,l:c?-V[r][c-1]:0,rt:c<n-1?V[r][c]:0};
-    p2.path=piecePath({t:p2.t,r:p2.rt,b:p2.b,l:p2.l},G.s,G.pad);
+  var R=G.rows,C=G.cols,H=[],V=[],r,c,st=document.getElementById('pz-stage');
+  for(r=0;r<R;r++){H[r]=[];V[r]=[];for(c=0;c<C;c++){H[r][c]=Math.random()<.5?1:-1;V[r][c]=Math.random()<.5?1:-1}}
+  for(r=0;r<R;r++)for(c=0;c<C;c++){
+    var p2={row:r,col:c,t:r?-H[r-1][c]:0,b:r<R-1?H[r][c]:0,l:c?-V[r][c-1]:0,rt:c<C-1?V[r][c]:0};
+    p2.path=piecePath({t:p2.t,r:p2.rt,b:p2.b,l:p2.l},G.sw,G.sh,G.pad);
     p2.el=document.createElement('canvas');p2.el.className='pz-pc';
     G.pieces.push(p2);
   }
-  G.pieces.forEach(function(p){p.r=p.row;p.c=p.col;draw(p,true);p.hx=G.bx+p.col*G.s-G.pad;p.hy=G.by+p.row*G.s-G.pad;place(p,p.hx,p.hy);st.appendChild(p.el)});
+  G.pieces.forEach(function(p){p.r=p.row;p.c=p.col;draw(p,true);p.hx=G.bx+p.col*G.sw-G.pad;p.hy=G.by+p.row*G.sh-G.pad;place(p,p.hx,p.hy);st.appendChild(p.el)});
 }
 function place(p,x,y){p.x=x;p.y=y;p.el.style.transform='translate3d('+x+'px,'+y+'px,0)'}
 function scatter(){
-  var T=G.tray,S=G.s+G.pad*2,list=G.pieces.slice().sort(function(){return Math.random()-.5});
+  var T=G.tray,SW=G.sw+G.pad*2,SH=G.sh+G.pad*2,list=G.pieces.slice().sort(function(){return Math.random()-.5});
   list.forEach(function(p,i){
-    var x=T.x+Math.random()*Math.max(1,T.w-S)-G.pad*0.2,y=T.y+Math.random()*Math.max(1,T.h-S);
+    var x=T.x+Math.random()*Math.max(1,T.w-SW)-G.pad*0.2,y=T.y+Math.random()*Math.max(1,T.h-SH);
     p.el.style.transition='transform .7s cubic-bezier(.2,.8,.2,1) '+(i*12)+'ms';place(p,x,y);p.el.style.zIndex=++G.z;
   });
   setTimeout(function(){G&&G.pieces.forEach(function(p){p.el.style.transition=''})},800+list.length*12);
@@ -128,10 +139,10 @@ function tick(){if(!G||!G.run)return;document.getElementById('pz-time').textCont
 var drag=null;
 function hit(ev){
   var st=document.getElementById('pz-stage'),R=st.getBoundingClientRect(),px=ev.clientX-R.left,py=ev.clientY-R.top,best=null,bz=-1;
-  G.pieces.forEach(function(p){if(p.lock)return;var lx=px-p.x,ly=py-p.y,S=G.s+G.pad*2;if(lx<0||ly<0||lx>S||ly>S)return;
+  G.pieces.forEach(function(p){if(p.lock)return;var lx=px-p.x,ly=py-p.y;if(lx<0||ly<0||lx>G.sw+G.pad*2||ly>G.sh+G.pad*2)return;
     if(!testCtx.isPointInPath(p.path,lx,ly))return;var z=+p.el.style.zIndex||0;if(z>bz){bz=z;best=p}});
   // 指先は太いので、形の外でも近くのピースを拾う
-  if(!best)G.pieces.forEach(function(p){if(p.lock)return;var cx=p.x+G.pad+G.s/2,cy=p.y+G.pad+G.s/2;if(Math.abs(px-cx)<G.s*.6&&Math.abs(py-cy)<G.s*.6){var z=+p.el.style.zIndex||0;if(z>bz){bz=z;best=p}}});
+  if(!best)G.pieces.forEach(function(p){if(p.lock)return;var cx=p.x+G.pad+G.sw/2,cy=p.y+G.pad+G.sh/2;if(Math.abs(px-cx)<G.sw*.6&&Math.abs(py-cy)<G.sh*.6){var z=+p.el.style.zIndex||0;if(z>bz){bz=z;best=p}}});
   return best&&{p:best,ox:px-best.x,oy:py-best.y,R:R};
 }
 document.addEventListener('pointerdown',function(ev){
@@ -141,8 +152,8 @@ document.addEventListener('pointerdown',function(ev){
 },{passive:false});
 document.addEventListener('pointermove',function(ev){
   if(!drag||ev.pointerId!==drag.id)return;ev.preventDefault();
-  var S=G.s+G.pad*2,x=ev.clientX-drag.R.left-drag.ox,y=ev.clientY-drag.R.top-drag.oy;
-  x=Math.max(-G.pad,Math.min(G.W-S+G.pad,x));y=Math.max(-G.pad,Math.min(G.H-S+G.pad,y));place(drag.p,x,y);
+  var x=ev.clientX-drag.R.left-drag.ox,y=ev.clientY-drag.R.top-drag.oy;
+  x=Math.max(-G.pad,Math.min(G.W-G.sw-G.pad,x));y=Math.max(-G.pad,Math.min(G.H-G.sh-G.pad,y));place(drag.p,x,y);
 },{passive:false});
 function up(ev){
   if(!drag||ev.pointerId!==drag.id)return;var p=drag.p;drag=null;p.el.classList.remove('drag');
@@ -150,9 +161,9 @@ function up(ev){
     p.lock=true;p.el.style.transition='transform .12s ease-out';place(p,p.hx,p.hy);p.el.style.zIndex=1;p.el.classList.add('lock');draw(p,false);
     setTimeout(function(){p.el.style.transition=''},150);
     try{navigator.vibrate&&navigator.vibrate(12)}catch(x){}
-    spark(p.hx+G.pad+G.s/2,p.hy+G.pad+G.s/2);
+    spark(p.hx+G.pad+G.sw/2,p.hy+G.pad+G.sh/2);
     G.done++;var d=document.getElementById('pz-done');d.textContent=G.done;d.parentNode.classList.remove('bump');void d.offsetWidth;d.parentNode.classList.add('bump');
-    if(G.done===G.n*G.n)finish();
+    if(G.done===G.cols*G.rows)finish();
   }
 }
 document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
@@ -171,7 +182,7 @@ function finish(){
 function form(){
   var w=G.L.querySelector('.pz-win');if(!w)return;
   var teams=RR.BLK.A.t.slice().concat(['保護者・応援','スタッフ・審判']);
-  w.innerHTML='<form class="pz-form" id="pz-form"><span class="pz-k">'+LV[G.n].nm+'（'+G.n+'×'+G.n+'）</span><b class="pz-wt">'+fmt(G.t1)+'</b>'+
+  w.innerHTML='<form class="pz-form" id="pz-form"><span class="pz-k">'+LV[G.n].nm+'（'+LV[G.n].gr+'）</span><b class="pz-wt">'+fmt(G.t1)+'</b>'+
    '<label><span>なまえ <em>必須</em></span><input id="pz-name" maxlength="16" required autocomplete="nickname" value="'+e(lsg('rr-pz-name')||'')+'" placeholder="例：なかざわ"></label>'+
    '<label><span>チーム名 <small>（任意）</small></span><input id="pz-teamin" maxlength="24" list="pz-teams" value="'+e(lsg('rr-pz-team')||'')+'" placeholder="えらぶ or 入力"><datalist id="pz-teams">'+teams.map(function(t){return '<option value="'+e(t)+'">'}).join('')+'</datalist></label>'+
    '<button type="submit" class="pz-done-btn">ランキングに登録</button><p class="pz-msg" id="pz-msg"></p></form>';
