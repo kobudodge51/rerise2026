@@ -867,3 +867,12 @@ html.pz-on,html.pz-on body{overflow:hidden;overscroll-behavior:none}
 .pz-conf{position:absolute;inset:0;z-index:20003;pointer-events:none}
 .pz-peek[hidden]{display:none}
 .pz-form label>span{display:flex;align-items:center;gap:4px}
+/* 都道府県チップ：高級感のある光沢 */
+.pfc,:root[data-theme="dark"] .pfc{position:relative;overflow:hidden;color:#fff;border:1px solid color-mix(in srgb,var(--c) 70%,#000);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 55%,#fff) 0%,var(--c) 48%,color-mix(in srgb,var(--c) 78%,#000) 52%,color-mix(in srgb,var(--c) 88%,#000) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.25),0 0 0 1px rgba(244,197,66,.35);
+  text-shadow:0 1px 1px rgba(0,0,0,.35);letter-spacing:.06em}
+.pfc::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:pfshine 4.5s ease-in-out infinite}
+@keyframes pfshine{0%,70%{left:-60%}100%{left:130%}}
+@media (prefers-reduced-motion:reduce){.pfc::after{animation:none;display:none}}
+td.name .pfc{vertical-align:1px}

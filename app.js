@@ -107,7 +107,7 @@ function seedLabel(code){
 function tourMatches(C){return TOUR.map(function(d){var t=C.T[d.id];return {key:'t'+d.id,kind:'tour',id:d.id,row:d.row,court:d.c,time:TTIME[d.row]||'',a:t.a,b:t.b,pa:seedLabel(d.a),pb:seedLabel(d.b),div:d.div,r:d.r,fin:d.fin}})}
 
 /* ---------- 部品 ---------- */
-var GAME_ON=(function(){try{if(/[?&]game=1/.test(location.search))localStorage.setItem('rr-game','1');return localStorage.getItem('rr-game')==='1'}catch(e){return /[?&]game=1/.test(location.search)}})();
+var GAME_ON=true;
 var ICON={
   game:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3.2a2.3 2.3 0 1 1 4.6 0H15v3.2a2.3 2.3 0 1 1 0 4.6V20H4z"/><path d="M15 8h5v12h-5"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8 20h8M9 17h6"/></svg>',
@@ -182,7 +182,7 @@ function viewLeague(C){
   D.blocks.forEach(function(b){
     var arr=C.lg[b],n=arr.length,nums='①②③④⑤⑥⑦⑧⑨⑩';
     h+='<div class="card"><h3>順位表'+(C.bdone[b]?'<span class="done">確定</span>':'')+'</h3><div class="tbl-wrap"><table><colgroup><col style="width:11%"><col style="width:37%"><col><col><col><col style="width:10%"><col style="width:10%"><col style="width:11%"></colgroup><thead><tr><th>順位</th><th class="name">チーム</th><th>勝</th><th>分</th><th>負</th><th>勝点</th><th>内野</th><th>相手<br>内野</th></tr></thead><tbody>'+
-     arr.map(function(r){var on=r.p>0;return '<tr><td class="rk'+(on&&r.rank===1?' rk1':'')+'">'+(on?r.rank:'–')+'</td><td class="name"><span class="no">'+r.code.slice(1)+'</span>'+esc(r.n)+'<small class="pf">（'+PREF[r.n]+'）</small>'+(r.tied?'<span class="tie">同点・本部判断</span>':'')+(isAdmin()&&r.tied?adjBtn(r.code):'')+'</td><td>'+r.w+'</td><td>'+r.d+'</td><td>'+r.l+'</td><td><b>'+r.pts+'</b></td><td>'+r.inn+'</td><td>'+r.opp+'</td></tr>'}).join('')+'</tbody></table></div></div>';
+     arr.map(function(r){var on=r.p>0;return '<tr><td class="rk'+(on&&r.rank===1?' rk1':'')+'">'+(on?r.rank:'–')+'</td><td class="name"><span class="no">'+r.code.slice(1)+'</span>'+esc(r.n)+prefChip(r.n)+(r.tied?'<span class="tie">同点・本部判断</span>':'')+(isAdmin()&&r.tied?adjBtn(r.code):'')+'</td><td>'+r.w+'</td><td>'+r.d+'</td><td>'+r.l+'</td><td><b>'+r.pts+'</b></td><td>'+r.inn+'</td><td>'+r.opp+'</td></tr>'}).join('')+'</tbody></table></div></div>';
     var ts=BLK[b].t;
     h+='<div class="card"><h3>星取表</h3><div class="tbl-wrap"><table class="mx mx10"><colgroup><col style="width:22%">'+ts.map(function(){return '<col>'}).join('')+'</colgroup><thead><tr><th class="name">対戦</th>'+ts.map(function(_,i){return '<th>'+nums[i]+'</th>'}).join('')+'</tr></thead><tbody>'+
      ts.map(function(a,i){var ca=b+(i+1);return '<tr><td class="name"><span class="no">'+nums[i]+'</span>'+esc(a)+'</td>'+ts.map(function(_,j){var cb=b+(j+1);if(i===j)return '<td class="diag"></td>';var v=C.h2h[ca+'|'+cb];return v?'<td><span class="'+(v[0]>v[1]?'o':v[0]<v[1]?'x':'d')+'">'+(v[0]>v[1]?'〇':v[0]<v[1]?'×':'△')+'</span><small>'+v[0]+'-'+v[1]+'</small></td>':'<td><small>–</small></td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div></div>';
