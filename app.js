@@ -352,7 +352,7 @@ var KC=[
  ['桜Diner','img/k-sakura.webp','飛騨牛コロッケ 350円・チーズハットグ 600円・炙り塩豚まん 450円・山賊焼き 700円・マヨから丼 800円・フライドポテト 500円・40cmロングチュロス 600円・ディッピンドッツ 600円 など','甘いものもがっつり丼も','img/k-sakura-live.webp'],
  ['お食事処 夢（ハンバーグ丼の夢mama）','img/k-yume.webp','ハンバーグBOX（デミグラス・トマト・てりやき）900円・スペシャルBOX 1,500円・ハンバーグ丼・ハンバーグドッグ 600円・ミニ揚げパン 300円・タピオカドリンク 600円・ドリンク 400円 など（トッピング各＋100円）','一つ一つ手作り！豆腐・おから入りのふわふわハンバーグ','img/k-yume-live.webp'],
  ['お好み焼 4resT（ふぉれすと）','img/k-4rest.webp','豚焼そば 600円 など','鉄板で焼きたての焼そば','img/k-4rest-live.webp'],
- ['RyoTheSea','img/k-ryo.webp','プルドポークバーガー・ホットドッグ など','STANDARD HOT DOG AND BURGER'],
+ ['RyoTheSea','img/k-ryo.webp','プルドポークバーガー 800円・チーズバーガー 700円・フランクフルト 300円・アイスコーヒー 300円・カフェラテ 350円 など','STANDARD HOT DOG AND BURGER','img/k-ryo-live.webp'],
  ['本格手打ち そば道楽','img/k-soba.webp','本格手打ちそば など','本格手打ち']
 ];
 function viewSpon(){
