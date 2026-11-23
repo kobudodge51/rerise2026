@@ -350,45 +350,44 @@ function saveRow(k,goNext){
 }
 /* ---------- コントロールイベント（15球でコーンを倒した数） ---------- */
 var CTL_MAX=15;
-var CTL_FIN=['Thunder youth','ORACCHA','Re:RISE','DRAGON BALL®']; // 決勝進出
-function ctlRows(pre,names){
-  names=names||BLK.A.t;
-  var rows=names.map(function(n){var i=BLK.A.t.indexOf(n)+1,v=sc(pre+i);return {n:n,i:i,v:v?v.a:null,vp:v&&v.w==='v'?v.fa:null}});
-  function vp(r){return r.vp==null?-1:r.vp}
-  rows.sort(function(x,y){if(x.v===null&&y.v===null)return names.indexOf(x.n)-names.indexOf(y.n);if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||vp(y)-vp(x)||x.i-y.i});
-  var rk=0,prev=null;rows.forEach(function(r,k){if(r.v===null){r.rk=null;return}var key=r.v+'|'+vp(r);if(key!==prev){rk=k+1;prev=key}r.rk=rk});
+// 予選の本数 → 同じ本数のチームは決勝（15本）→ さらに同じならVポイントゲーム（9本）で順位を決める
+function ctlRows(){
+  var rows=BLK.A.t.map(function(n,i){var q=sc('ctl'+(i+1)),f=sc('ctlf'+(i+1));return {n:n,i:i+1,v:q?q.a:null,f:f?f.a:null,vp:f&&f.w==='v'?f.fa:null}});
+  function g(x){return x==null?-1:x}
+  rows.sort(function(x,y){if(x.v===null&&y.v===null)return x.i-y.i;if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||g(y.f)-g(x.f)||g(y.vp)-g(x.vp)||x.i-y.i});
+  var rk=0,prev=null;rows.forEach(function(r,k){if(r.v===null){r.rk=null;return}var key=r.v+'|'+g(r.f)+'|'+g(r.vp);if(key!==prev){rk=k+1;prev=key}r.rk=rk});
   return rows;
 }
-function ctlList(rows,fin){
-  return '<ol class="ctl-list'+(fin?' fin':'')+'">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
-    return '<li class="'+(top?'top t'+r.rk:'')+(r.v===null?' na':'')+'"><span class="ctl-rk">'+(r.rk?(r.rk===1?'🥇':r.rk===2?'🥈':r.rk===3?'🥉':r.rk):'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span>'+
-     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small>'+(r.vp!=null?'<span class="ctl-vp" title="Vポイントゲーム（9本勝負）"><i>V</i><b>'+r.vp+'</b><small>/9</small></span>':'')+'</span><span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol>';
-}
 function ctlHTML(){
-  var q=ctlRows('ctl'),f=ctlRows('ctlf',CTL_FIN),qd=q.filter(function(r){return r.v!==null}).length,fd=f.filter(function(r){return r.v!==null}).length;
-  var h='<section class="card ctl"><h2>🎯 コントロールイベント</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。予選の上位4チームで決勝を行います。決勝で同じ本数のときは、Vポイントゲーム（9本勝負）で多く倒したチームが上位です。</p>';
-  h+='<h3 class="ctl-h fin">🏆 決勝'+(fd===f.length?'<span class="done">確定</span>':'')+'</h3>';
-  h+=fd?ctlList(f,true):'<p class="ctl-empty">決勝進出：'+CTL_FIN.map(esc).join('・')+'<br>記録が入ると、ここに順位が表示されます。</p>';
-  h+='<h3 class="ctl-h">予選'+(qd<q.length?'<small>（'+qd+' / '+q.length+' チーム記録済み）</small>':'<span class="done">確定</span>')+'</h3>';
-  h+=qd?ctlList(q,false):'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p>';
+  var rows=ctlRows(),done=rows.filter(function(r){return r.v!==null}).length;
+  var h='<section class="card ctl"><h2>🎯 コントロールイベント'+(done===rows.length?'<span class="done">確定</span>':'')+'</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。予選で同じ本数のチームは決勝（15球）、それでも同じときはVポイントゲーム（9本勝負）で順位を決めます。'+(done<rows.length?'（'+done+' / '+rows.length+' チーム記録済み）':'')+'</p>';
+  if(!done)return h+'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p></section>';
+  h+='<ol class="ctl-list">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
+    return '<li class="'+(top?'top t'+r.rk:'')+(r.v===null?' na':'')+'"><span class="ctl-rk">'+(r.rk?(r.rk===1?'🥇':r.rk===2?'🥈':r.rk===3?'🥉':r.rk):'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span>'+
+     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><small class="lb">予選</small><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small></span>'+
+      ((r.f!=null||r.vp!=null)?'<span class="ctl-ex">'+(r.f!=null?'<span class="ctl-fx"><i>決勝</i><b>'+r.f+'</b><small>本</small></span>':'')+(r.vp!=null?'<span class="ctl-vp"><i>V</i><b>'+r.vp+'</b><small>/9</small></span>':'')+'</span>':'')+
+      '<span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol>';
   return h+'</section>';
 }
-function ctlEntryBlock(title,pre,rows){
-  return '<h3 class="ctl-h'+(pre==='ctlf'?' fin':'')+'">'+title+'</h3><ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span><input type="number" inputmode="numeric" min="0" max="15" data-ctl="'+r.i+'" data-pre="'+pre+'" value="'+(r.v===null?'':r.v)+'" placeholder="–" aria-label="'+esc(r.n)+'の倒した本数"><small>/15本</small>'+(pre==='ctlf'?'<label class="ctl-vin"><i>V</i><input type="number" inputmode="numeric" min="0" max="9" data-ctlv="'+r.i+'" value="'+(r.vp==null?'':r.vp)+'" placeholder="–" aria-label="'+esc(r.n)+'のVポイント（9本中）"><small>/9</small></label>':'')+'</li>'}).join('')+'</ol>';
-}
 function ctlEntryHTML(){
-  return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note">倒したコーンの数（0〜15）を入れて <b>Enter</b>（スマホは「完了」）を押すと保存され、多い順に自動で並び替わります。消すときは数字を消して Enter。</p>'+
-   ctlEntryBlock('🏆 決勝（4チーム）','ctlf',ctlRows('ctlf',CTL_FIN))+ctlEntryBlock('予選（10チーム）','ctl',ctlRows('ctl'))+'</div>';
+  var rows=ctlRows();
+  function inp(attr,val,max,lab,cls){return '<input type="number" inputmode="numeric" min="0" max="'+max+'" '+attr+' value="'+(val==null?'':val)+'" placeholder="–" aria-label="'+lab+'" class="'+cls+'">'}
+  return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note"><b>予選</b>に倒した本数（0〜15）を入れて <b>Enter</b>（スマホは「完了」）で保存。予選で同じ本数のチームだけ、<b>決勝</b>（0〜15）と、さらに同じなら <b>V</b>（0〜9）を入れてください。順位は自動で並び替わります。消すときは数字を消して Enter。</p>'+
+   '<div class="ctl-ehead" aria-hidden="true"><span></span><span>チーム</span><span>予選</span><span>決勝</span><span>V</span></div>'+
+   '<ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b></span>'+
+     inp('data-ctl="'+r.i+'" data-pre="ctl"',r.v,15,esc(r.n)+'の予選の本数','q')+inp('data-ctl="'+r.i+'" data-pre="ctlf"',r.f,15,esc(r.n)+'の決勝の本数','f')+inp('data-ctlv="'+r.i+'"',r.vp,9,esc(r.n)+'のVポイント','v')+'</li>'}).join('')+'</ol></div>';
 }
 function saveCtl(el){
-  var vin=el.closest('li')&&el.closest('li').querySelector('input[data-ctlv]');if(el.hasAttribute('data-ctlv'))el=el.closest('li').querySelector('input[data-ctl]');
-  var i=+el.getAttribute('data-ctl'),pre=el.getAttribute('data-pre')||'ctl',k=pre+i,t=el.value.trim(),cur=sc(k),vt=vin?vin.value.trim():'';
-  if(t===''){if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(r){if(r.error)throw r.error;delete state.scores[k];render();toast('記録を消しました')}).catch(werr));return}
+  var li=el.closest('li');if(!li)return;
+  var isV=el.hasAttribute('data-ctlv');if(isV)el=li.querySelector('input[data-pre="ctlf"]');
+  var vin=li.querySelector('input[data-ctlv]'),i=+el.getAttribute('data-ctl'),pre=el.getAttribute('data-pre'),k=pre+i,t=el.value.trim(),cur=sc(k),vt=pre==='ctlf'&&vin?vin.value.trim():'';
+  if(t===''){if(isV&&vt!==''){toast('先に決勝の本数を入れてください');el.focus();return}if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(r){if(r.error)throw r.error;delete state.scores[k];render();toast('記録を消しました')}).catch(werr));return}
   if(!/^\d{1,2}$/.test(t)||+t>CTL_MAX){toast('0〜15の数字を入れてください');el.focus();el.select();return}
-  if(vt!==''&&(!/^\d$/.test(vt))){toast('Vポイントは0〜9の数字を入れてください');vin.focus();vin.select();return}
+  if(vt!==''&&!/^\d$/.test(vt)){toast('Vは0〜9の数字を入れてください');vin.focus();vin.select();return}
   var v=+t,w=vt!==''?'v|'+vt+'|0':null,curvp=cur&&cur.w==='v'?String(cur.fa):'';if(cur&&cur.a===v&&curvp===vt)return;
-  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:w}).then(function(r){if(r.error)throw r.error;state.scores[k]=parseW({a:v,b:0,w:w});render();toast('保存しました：'+(pre==='ctlf'?'【決勝】':'')+BLK.A.t[i-1]+' '+v+'本'+(vt!==''?'（V '+vt+'本）':''));
-    setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-pre="'+pre+'"]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
+  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:w}).then(function(r){if(r.error)throw r.error;state.scores[k]=parseW({a:v,b:0,w:w});render();
+    toast('保存しました：'+BLK.A.t[i-1]+'（'+(pre==='ctlf'?'決勝':'予選')+'）'+v+'本'+(vt!==''?'・V '+vt+'本':''));
+    if(pre==='ctl')setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-pre="ctl"]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
 }
 document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl],input[data-ctlv]')&&e.key==='Enter'){e.preventDefault();if(!busy)saveCtl(t)}});
 document.addEventListener('change',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl],input[data-ctlv]')&&!busy)saveCtl(t)});
