@@ -876,3 +876,5 @@ html.pz-on,html.pz-on body{overflow:hidden;overscroll-behavior:none}
 @keyframes pfshine{0%,70%{left:-60%}100%{left:130%}}
 @media (prefers-reduced-motion:reduce){.pfc::after{animation:none;display:none}}
 td.name .pfc{vertical-align:1px}
+/* 予選順位表：県チップはチーム名の下にそろえて表示 */
+td.name .pfc{display:flex;width:fit-content;margin:3px 0 0;vertical-align:0}
