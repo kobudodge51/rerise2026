@@ -350,33 +350,42 @@ function saveRow(k,goNext){
 }
 /* ---------- コントロールイベント（15球でコーンを倒した数） ---------- */
 var CTL_MAX=15;
-function ctlRows(){
-  var rows=BLK.A.t.map(function(n,i){var v=sc('ctl'+(i+1));return {n:n,i:i+1,v:v?v.a:null}});
-  rows.sort(function(x,y){if(x.v===null&&y.v===null)return x.i-y.i;if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||x.i-y.i});
+var CTL_FIN=['Thunder youth','ORACCHA','Re:RISE','DRAGON BALL®']; // 決勝進出
+function ctlRows(pre,names){
+  names=names||BLK.A.t;
+  var rows=names.map(function(n){var i=BLK.A.t.indexOf(n)+1,v=sc(pre+i);return {n:n,i:i,v:v?v.a:null}});
+  rows.sort(function(x,y){if(x.v===null&&y.v===null)return names.indexOf(x.n)-names.indexOf(y.n);if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||x.i-y.i});
   var rk=0,prev=null;rows.forEach(function(r,k){if(r.v===null){r.rk=null;return}if(r.v!==prev){rk=k+1;prev=r.v}r.rk=rk});
   return rows;
 }
-function ctlHTML(){
-  var rows=ctlRows(),done=rows.filter(function(r){return r.v!==null}).length;
-  var h='<section class="card ctl"><h2>🎯 コントロールイベント</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。'+(done<rows.length?'（'+done+' / '+rows.length+' チーム記録済み）':'（全チーム記録済み）')+'</p>';
-  if(!done)return h+'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p></section>';
-  h+='<ol class="ctl-list">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
+function ctlList(rows,fin){
+  return '<ol class="ctl-list'+(fin?' fin':'')+'">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
     return '<li class="'+(top?'top t'+r.rk:'')+(r.v===null?' na':'')+'"><span class="ctl-rk">'+(r.rk?(r.rk===1?'🥇':r.rk===2?'🥈':r.rk===3?'🥉':r.rk):'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span>'+
-     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small></span><span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol></section>';
-  return h;
+     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small></span><span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol>';
+}
+function ctlHTML(){
+  var q=ctlRows('ctl'),f=ctlRows('ctlf',CTL_FIN),qd=q.filter(function(r){return r.v!==null}).length,fd=f.filter(function(r){return r.v!==null}).length;
+  var h='<section class="card ctl"><h2>🎯 コントロールイベント</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。予選の上位4チームで決勝を行います。</p>';
+  h+='<h3 class="ctl-h fin">🏆 決勝'+(fd===f.length?'<span class="done">確定</span>':'')+'</h3>';
+  h+=fd?ctlList(f,true):'<p class="ctl-empty">決勝進出：'+CTL_FIN.map(esc).join('・')+'<br>記録が入ると、ここに順位が表示されます。</p>';
+  h+='<h3 class="ctl-h">予選'+(qd<q.length?'<small>（'+qd+' / '+q.length+' チーム記録済み）</small>':'<span class="done">確定</span>')+'</h3>';
+  h+=qd?ctlList(q,false):'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p>';
+  return h+'</section>';
+}
+function ctlEntryBlock(title,pre,rows){
+  return '<h3 class="ctl-h'+(pre==='ctlf'?' fin':'')+'">'+title+'</h3><ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span><input type="number" inputmode="numeric" min="0" max="15" data-ctl="'+r.i+'" data-pre="'+pre+'" value="'+(r.v===null?'':r.v)+'" placeholder="–" aria-label="'+esc(r.n)+'の倒した本数"><small>/15本</small></li>'}).join('')+'</ol>';
 }
 function ctlEntryHTML(){
-  var rows=ctlRows();
   return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note">倒したコーンの数（0〜15）を入れて <b>Enter</b>（スマホは「完了」）を押すと保存され、多い順に自動で並び替わります。消すときは数字を消して Enter。</p>'+
-   '<ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span><input type="number" inputmode="numeric" min="0" max="15" data-ctl="'+r.i+'" value="'+(r.v===null?'':r.v)+'" placeholder="–" aria-label="'+esc(r.n)+'の倒した本数"><small>/15本</small></li>'}).join('')+'</ol></div>';
+   ctlEntryBlock('🏆 決勝（4チーム）','ctlf',ctlRows('ctlf',CTL_FIN))+ctlEntryBlock('予選（10チーム）','ctl',ctlRows('ctl'))+'</div>';
 }
 function saveCtl(el){
-  var i=+el.getAttribute('data-ctl'),k='ctl'+i,t=el.value.trim(),cur=sc(k);
+  var i=+el.getAttribute('data-ctl'),pre=el.getAttribute('data-pre')||'ctl',k=pre+i,t=el.value.trim(),cur=sc(k);
   if(t===''){if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(r){if(r.error)throw r.error;delete state.scores[k];render();toast('記録を消しました')}).catch(werr));return}
   if(!/^\d{1,2}$/.test(t)||+t>CTL_MAX){toast('0〜15の数字を入れてください');el.focus();el.select();return}
   var v=+t;if(cur&&cur.a===v)return;
-  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:null}).then(function(r){if(r.error)throw r.error;state.scores[k]={a:v,b:0,w:null};render();toast('保存しました：'+BLK.A.t[i-1]+' '+v+'本');
-    setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-ctl]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
+  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:null}).then(function(r){if(r.error)throw r.error;state.scores[k]={a:v,b:0,w:null};render();toast('保存しました：'+(pre==='ctlf'?'【決勝】':'')+BLK.A.t[i-1]+' '+v+'本');
+    setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-pre="'+pre+'"]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
 }
 document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl]')&&e.key==='Enter'){e.preventDefault();if(!busy)saveCtl(t)}});
 document.addEventListener('change',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl]')&&!busy)saveCtl(t)});

@@ -943,3 +943,9 @@ td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
 .ctl-elist input{width:72px;box-sizing:border-box;font-size:22px;font-weight:700;text-align:center;padding:6px 4px;border-radius:10px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font-family:"Courier Prime",ui-monospace,monospace}
 .ctl-elist input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,.2)}
 .ctl-elist small{font-size:11px;color:var(--muted);font-weight:700}
+.ctl-h{display:flex;align-items:center;gap:6px;margin:12px 0 6px;font-size:15px}
+.ctl-h small{font-size:11px;color:var(--muted);font-weight:700}
+.ctl-h.fin{margin-top:4px;color:var(--red);font-family:var(--pop);font-weight:400;font-size:17px}
+.ctl-list.fin li{padding:9px 12px 10px;border-width:1.5px}
+.ctl-list.fin .ctl-tm b{font-size:16px}.ctl-list.fin .ctl-v b{font-size:28px}
+.ctl-list.fin li.t1{box-shadow:0 0 0 2px rgba(244,197,66,.6),0 6px 16px rgba(200,150,20,.3)}
