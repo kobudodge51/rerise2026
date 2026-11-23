@@ -262,6 +262,7 @@ function viewResult(C){
   h+='<section class="rs-col rs-one">'+champBox('優勝',ch,ch&&PREF[ch]?PREF[ch]+(PREF[ch]==='大阪'?'府':'県'):'');
   h+='<ol class="rs-pod">'+rows.map(function(r){return '<li class="'+r[0]+'"><span class="pl">'+r[1]+'</span><b>'+(r[2]?esc(r[2])+pf(r[2]):'<span class="ph">未確定</span>')+'</b></li>'}).join('')+'</ol>';
   h+='<div class="rm-list">'+['T5-A','T5-B','T6-B','T6-A'].map(function(id){return rmatch(byId[id])}).join('')+'</div></section>';
+  h+=ctlHTML();
   return h;
 }
 function viewTour(C){
@@ -309,7 +310,7 @@ function rowState(m){var d=drafts[m.key],v=sc(m.key);if(d&&(d.a!==undefined||d.b
 function viewEntry(C){
   var ms=allMatches(C),n=ms.filter(function(m){return sc(m.key)}).length;
   var list=ms.filter(function(m){return efil==='pre'?m.kind==='pre':efil==='tour'?m.kind==='tour':efil==='todo'?(!sc(m.key)&&!m.off):true});
-  var h='<div class="card"><h2>結果の入力</h2><div class="progress" aria-label="入力済み '+n+' / '+ms.length+'"><b style="width:'+(n/ms.length*100).toFixed(1)+'%"></b></div>'+
+  var h=ctlEntryHTML()+'<div class="card"><h2>結果の入力</h2><div class="progress" aria-label="入力済み '+n+' / '+ms.length+'"><b style="width:'+(n/ms.length*100).toFixed(1)+'%"></b></div>'+
    '<p class="note">入力済み '+n+' / '+ms.length+' 試合。数字は試合終了時の内野人数（決勝戦は取ったセット数）です。'+(MOBILE?'<b>数字を2つ打つと自動で保存</b>され、次の試合に進みます。':'テンキーで <b>左の数字 → 右の数字 → Enter</b> で保存し、次の試合に進みます（2〜9と0は自動で右の欄へ移ります。10〜19は「1」に続けてもう1桁打ってください）。↑↓キーで試合を移動できます。')+'</p>'+
    seg('efil',efil,[['all','すべて'],['pre','予選'],['tour','決勝T'],['todo','未入力だけ']])+'</div>';
   h+='<div class="etbl-wrap"><table class="etbl"><colgroup><col style="width:170px"><col><col style="width:100px"><col style="width:22px"><col style="width:100px"><col><col style="width:170px"><col style="width:132px"></colgroup><thead><tr><th class="c-no">試合</th><th class="c-tm r">チーム（左）</th><th class="c-in" colspan="3">内野人数</th><th class="c-tm">チーム（右）</th><th class="c-v">Vポイント勝者</th><th class="c-op"></th></tr></thead><tbody>';
@@ -347,6 +348,38 @@ function saveRow(k,goNext){
   once(rpc('rr26_save_result',{p_key:k,p_a:a,p_b:b,p_w:w}).then(function(r){if(r.error)throw r.error;state.scores[k]=parseW({a:a,b:b,w:w});delete drafts[k];render();
     toast('保存しました：'+m.a+' '+a+' - '+b+' '+m.b);if(goNext)focusNext(k)}).catch(werr));
 }
+/* ---------- コントロールイベント（15球でコーンを倒した数） ---------- */
+var CTL_MAX=15;
+function ctlRows(){
+  var rows=BLK.A.t.map(function(n,i){var v=sc('ctl'+(i+1));return {n:n,i:i+1,v:v?v.a:null}});
+  rows.sort(function(x,y){if(x.v===null&&y.v===null)return x.i-y.i;if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||x.i-y.i});
+  var rk=0,prev=null;rows.forEach(function(r,k){if(r.v===null){r.rk=null;return}if(r.v!==prev){rk=k+1;prev=r.v}r.rk=rk});
+  return rows;
+}
+function ctlHTML(){
+  var rows=ctlRows(),done=rows.filter(function(r){return r.v!==null}).length;
+  var h='<section class="card ctl"><h2>🎯 コントロールイベント</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。'+(done<rows.length?'（'+done+' / '+rows.length+' チーム記録済み）':'（全チーム記録済み）')+'</p>';
+  if(!done)return h+'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p></section>';
+  h+='<ol class="ctl-list">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
+    return '<li class="'+(top?'top t'+r.rk:'')+(r.v===null?' na':'')+'"><span class="ctl-rk">'+(r.rk?(r.rk===1?'🥇':r.rk===2?'🥈':r.rk===3?'🥉':r.rk):'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span>'+
+     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small></span><span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol></section>';
+  return h;
+}
+function ctlEntryHTML(){
+  var rows=ctlRows();
+  return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note">倒したコーンの数（0〜15）を入れて <b>Enter</b>（スマホは「完了」）を押すと保存され、多い順に自動で並び替わります。消すときは数字を消して Enter。</p>'+
+   '<ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span><input type="number" inputmode="numeric" min="0" max="15" data-ctl="'+r.i+'" value="'+(r.v===null?'':r.v)+'" placeholder="–" aria-label="'+esc(r.n)+'の倒した本数"><small>/15本</small></li>'}).join('')+'</ol></div>';
+}
+function saveCtl(el){
+  var i=+el.getAttribute('data-ctl'),k='ctl'+i,t=el.value.trim(),cur=sc(k);
+  if(t===''){if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(r){if(r.error)throw r.error;delete state.scores[k];render();toast('記録を消しました')}).catch(werr));return}
+  if(!/^\d{1,2}$/.test(t)||+t>CTL_MAX){toast('0〜15の数字を入れてください');el.focus();el.select();return}
+  var v=+t;if(cur&&cur.a===v)return;
+  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:null}).then(function(r){if(r.error)throw r.error;state.scores[k]={a:v,b:0,w:null};render();toast('保存しました：'+BLK.A.t[i-1]+' '+v+'本');
+    setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-ctl]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
+}
+document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl]')&&e.key==='Enter'){e.preventDefault();if(!busy)saveCtl(t)}});
+document.addEventListener('change',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl]')&&!busy)saveCtl(t)});
 /* ---------- 協賛・キッチンカー ---------- */
 var KC=[
  ['桜Diner','img/k-sakura.webp','飛騨牛コロッケ 350円・チーズハットグ 600円・炙り塩豚まん 450円・山賊焼き 700円・マヨから丼 800円・フライドポテト 500円・40cmロングチュロス 600円・ディッピンドッツ 600円 など','甘いものもがっつり丼も','img/k-sakura-live.webp'],
