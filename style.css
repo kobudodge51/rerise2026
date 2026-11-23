@@ -983,3 +983,13 @@ td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
 .ctl-rank li.na .ctl-tm b{color:var(--muted);font-weight:700;font-size:13px}
 .ctl-rsel li{grid-template-columns:3.4em minmax(0,1fr)!important}
 .ctl-rsel select{width:100%;font-size:16px}
+/* パズル③ ヒミツ */
+.pz-photos .pz-photo.mys{display:grid;place-items:center;background:radial-gradient(70% 60% at 50% 40%,#3a3a55,#0c0c18);transform:rotate(-2deg);width:min(30%,130px)}
+.pz-photos .pz-photo.mys>span:first-child{font-family:var(--pop);font-size:54px;color:#FFD66B;text-shadow:0 0 18px rgba(255,214,102,.8);animation:pzbob 1.6s ease-in-out infinite}
+.pz-photos .pz-photo.mys::after{display:none}
+.pz-photos{gap:10px}.pz-photos .pz-photo{width:min(36%,180px)}.pz-photos .pz-photo.tall{width:min(26%,120px)}
+.pz-mys{width:52px;height:70px;flex:none;display:grid;place-items:center;border-radius:10px;border:2px solid #F4C542;background:radial-gradient(70% 60% at 50% 40%,#3a3a55,#0c0c18);font-family:var(--pop);font-size:30px;color:#FFD66B}
+.pz-set.secret{background:radial-gradient(90% 70% at 50% 0%,rgba(244,197,66,.18),transparent 70%),var(--surface);border-color:#E8B830}
+.pz-new{font-style:normal;font-size:9px;color:#fff;background:#C8102E;border-radius:999px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.pz-rkp{grid-template-columns:repeat(3,1fr)}.pz-rkp button{font-size:11px;padding:7px 2px}
+.pz-sec{border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.25);color:#fff;font-weight:700;font-size:12px;border-radius:999px;padding:7px 10px;white-space:nowrap}

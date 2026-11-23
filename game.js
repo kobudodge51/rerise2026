@@ -4,9 +4,11 @@
 (function(){
 var PZ={
  1:{img:'img/nakazawa.webp',w:1024,h:1024,ghost:true,title:'中澤監督パズル',sub:'どアップ編',lv:[4,5,8],cap:'うっすら見本あり'},
- 2:{img:'img/nakazawa2.webp',w:1000,h:1600,ghost:false,title:'中澤監督パズル',sub:'腕組み全身編',lv:[47,58,69],cap:'見本の透かしなし・上級者向け'}};
+ 2:{img:'img/nakazawa2.webp',w:1000,h:1600,ghost:false,title:'中澤監督パズル',sub:'腕組み全身編',lv:[47,58,69],cap:'見本の透かしなし・上級者向け'},
+ 3:{img:'img/nakazawa3.webp',w:1000,h:1333,ghost:false,secret:true,title:'中澤監督パズル',sub:'ヒミツの最新作',lv:[74,85,96],cap:'完成するまで絵はヒミツ！見本なし'}};
 var LV={4:{p:1,c:4,r:4,nm:'かんたん',star:'★',k:'easy'},5:{p:1,c:5,r:5,nm:'ふつう',star:'★★',k:'mid'},8:{p:1,c:8,r:8,nm:'むずかしい',star:'★★★',k:'hard'},
- 47:{p:2,c:4,r:7,nm:'上級',star:'★★★★',k:'easy'},58:{p:2,c:5,r:8,nm:'超上級',star:'★★★★★★',k:'mid'},69:{p:2,c:6,r:9,nm:'鬼',star:'★★★★★★★★',k:'hard'}};
+ 47:{p:2,c:4,r:7,nm:'上級',star:'★★★★',k:'easy'},58:{p:2,c:5,r:8,nm:'超上級',star:'★★★★★★',k:'mid'},69:{p:2,c:6,r:9,nm:'鬼',star:'★★★★★★★★',k:'hard'},
+ 74:{p:3,c:4,r:7,nm:'上級',star:'★★★★',k:'easy'},85:{p:3,c:5,r:8,nm:'超上級',star:'★★★★★★',k:'mid'},96:{p:3,c:6,r:9,nm:'鬼',star:'★★★★★★★★',k:'hard'}};
 Object.keys(LV).forEach(function(k){var L=LV[k];L.gr=L.c+'×'+L.r;L.sub=(L.c*L.r)+'ピース'});
 var rk={},rkLv=+(lsg('rr-pz-lv')||4),rkAt=0,rkBusy=false,myIds=[];if(!LV[rkLv])rkLv=4;
 try{myIds=JSON.parse(localStorage.getItem('rr-pz-my')||'[]')}catch(e){}
@@ -40,14 +42,14 @@ window.viewGame=function(){
   loadRank();
   var h='<section class="pz-hero"><div class="pz-snow" aria-hidden="true">'+'❄❅❆✦❄✦❅❆'.split('').map(function(c,i){return '<i style="left:'+(6+i*12)+'%;animation-delay:-'+(i*1.3)+'s">'+c+'</i>'}).join('')+'</div>'+
    '<span class="pz-k">CHRISTMAS GAME</span><h2>🧩 中澤監督パズル</h2><p>バラバラになった中澤監督を、いちばん早く元に戻せるのは誰だ!?</p>'+
-   '<div class="pz-photos"><div class="pz-photo"><img src="'+PZ[1].img+'" alt="中澤監督 どアップ" width="1024" height="1024"></div><div class="pz-photo tall"><img src="'+PZ[2].img+'" alt="中澤監督 腕組み全身" width="1000" height="1600"><span class="pz-q">NEW</span></div></div></section>';
-  [1,2].forEach(function(pn){var P=PZ[pn];
-    h+='<section class="pz-set"><div class="pz-set-h"><img src="'+P.img+'" alt="" class="'+(pn===2?'tall':'')+'"><div><small>パズル'+(pn===1?'①':'②')+'</small><b>'+P.sub+'</b><em>'+P.cap+'</em></div></div>'+
-     '<div class="pz-lv">'+P.lv.map(function(n){var L=LV[n];return '<button type="button" class="pz-lvbtn '+L.k+(pn===2?' p2':'')+'" data-pzstart="'+n+'"><span class="st">'+L.star+'</span><b>'+L.nm+'</b><span class="gr"><i>'+L.gr+'</i>'+L.sub+'</span><span class="go">スタート ▶</span></button>'}).join('')+'</div></section>';
+   '<div class="pz-photos"><div class="pz-photo"><img src="'+PZ[1].img+'" alt="中澤監督 どアップ" width="1024" height="1024"></div><div class="pz-photo tall"><img src="'+PZ[2].img+'" alt="中澤監督 腕組み全身" width="1000" height="1600"></div><div class="pz-photo tall mys"><span>？</span><span class="pz-q">NEW</span></div></div></section>';
+  [1,2,3].forEach(function(pn){var P=PZ[pn];
+    h+='<section class="pz-set'+(P.secret?' secret':'')+'"><div class="pz-set-h">'+(P.secret?'<span class="pz-mys">？</span>':'<img src="'+P.img+'" alt="" class="'+(pn===2?'tall':'')+'">')+'<div><small>パズル'+'①②③'[pn-1]+(P.secret?' <i class="pz-new">NEW</i>':'')+'</small><b>'+P.sub+'</b><em>'+P.cap+'</em></div></div>'+
+     '<div class="pz-lv">'+P.lv.map(function(n){var L=LV[n];return '<button type="button" class="pz-lvbtn '+L.k+(pn>=2?' p2':'')+'" data-pzstart="'+n+'"><span class="st">'+L.star+'</span><b>'+L.nm+'</b><span class="gr"><i>'+L.gr+'</i>'+L.sub+'</span><span class="go">スタート ▶</span></button>'}).join('')+'</div></section>';
   });
   h+='<p class="note">ピースを指（マウス）でドラッグして、正しい場所に近づけるとピタッとはまります。完成までのタイムでランキングに挑戦！</p>';
   var cp=LV[rkLv].p;
-  h+='<div class="card pz-rkcard"><h3>🏆 ランキング</h3><div class="pz-rkp">'+[1,2].map(function(pn){return '<button type="button" data-pzrk="'+PZ[pn].lv[0]+'" aria-pressed="'+(cp===pn)+'">'+(pn===1?'①':'②')+' '+PZ[pn].sub+'</button>'}).join('')+'</div>'+
+  h+='<div class="card pz-rkcard"><h3>🏆 ランキング</h3><div class="pz-rkp">'+[1,2,3].map(function(pn){return '<button type="button" data-pzrk="'+PZ[pn].lv[0]+'" aria-pressed="'+(cp===pn)+'">'+'①②③'[pn-1]+' '+PZ[pn].sub+'</button>'}).join('')+'</div>'+
    '<div class="pz-rktabs" role="tablist">'+PZ[cp].lv.map(function(n){return '<button type="button" role="tab" data-pzrk="'+n+'" aria-selected="'+(rkLv===n)+'" class="'+LV[n].k+'">'+LV[n].nm+'<small>'+LV[n].gr+'（'+(rk[n]?rk[n].length:'-')+'人）</small></button>'}).join('')+'</div>'+rankHTML(rkLv,lastId)+'</div>';
   return h;
 };
@@ -70,7 +72,7 @@ function piecePath(pc,w,h,pad){
 
 /* ---------- プレイ ---------- */
 var G=null,lastId=null,IMGS={};
-[1,2].forEach(function(pn){var im=new Image();im.src=PZ[pn].img;IMGS[pn]=im});
+[1,2,3].forEach(function(pn){var im=new Image();im.src=PZ[pn].img;IMGS[pn]=im});
 var testCtx=document.createElement('canvas').getContext('2d');
 
 function start(n){
@@ -79,12 +81,12 @@ function start(n){
   if(!img.complete){img.onload=function(){img.onload=null;start(n)};return}
   lss('rr-pz-lv',n);rkLv=n;
   var L=document.createElement('div');L.className='pz-layer';L.innerHTML=
-   '<div class="pz-bar"><button type="button" class="pz-x" data-pzq>✕ やめる</button><div class="pz-tm"><small>'+L0.nm+' '+L0.gr+'</small><b id="pz-time">0:00.0</b></div><div class="pz-cnt"><b id="pz-done">0</b>/'+(L0.c*L0.r)+'</div><button type="button" class="pz-eye" data-pzeye>👀 見本</button></div>'+
+   '<div class="pz-bar"><button type="button" class="pz-x" data-pzq>✕ やめる</button><div class="pz-tm"><small>'+L0.nm+' '+L0.gr+'</small><b id="pz-time">0:00.0</b></div><div class="pz-cnt"><b id="pz-done">0</b>/'+(L0.c*L0.r)+'</div>'+(P.secret?'<span class="pz-eye pz-sec">🤫 ヒミツ</span>':'<button type="button" class="pz-eye" data-pzeye>👀 見本</button>')+'</div>'+
    '<div class="pz-stage" id="pz-stage"><div class="pz-board'+(P.ghost?'':' noghost')+'" id="pz-board"><img src="'+P.img+'" alt=""></div><div class="pz-tray" id="pz-tray"><span>ピース置き場</span></div></div>'+
-   '<div class="pz-peek" id="pz-peek" hidden><img src="'+P.img+'" alt="見本"><small>タップで閉じる</small></div>'+
+   (P.secret?'':'<div class="pz-peek" id="pz-peek" hidden><img src="'+P.img+'" alt="見本"><small>タップで閉じる</small></div>')+
    '<div class="pz-cd" id="pz-cd"></div>';
   document.body.appendChild(L);document.documentElement.classList.add('pz-on');
-  G={n:n,cols:L0.c,rows:L0.r,asp:P.w/P.h,im:img,L:L,pieces:[],done:0,t0:0,t1:0,run:false,z:10,finished:false};
+  G={n:n,secret:!!P.secret,cols:L0.c,rows:L0.r,asp:P.w/P.h,im:img,L:L,pieces:[],done:0,t0:0,t1:0,run:false,z:10,finished:false};
   layout();build();intro();
 }
 function layout(){
@@ -116,20 +118,21 @@ function build(){
   G.pieces.forEach(function(p){p.r=p.row;p.c=p.col;draw(p,true);p.hx=G.bx+p.col*G.sw-G.pad;p.hy=G.by+p.row*G.sh-G.pad;place(p,p.hx,p.hy);st.appendChild(p.el)});
 }
 function place(p,x,y){p.x=x;p.y=y;p.el.style.transform='translate3d('+x+'px,'+y+'px,0)'}
-function scatter(){
+function scatter(now){
   var T=G.tray,SW=G.sw+G.pad*2,SH=G.sh+G.pad*2,list=G.pieces.slice().sort(function(){return Math.random()-.5});
   list.forEach(function(p,i){
     var x=T.x+Math.random()*Math.max(1,T.w-SW)-G.pad*0.2,y=T.y+Math.random()*Math.max(1,T.h-SH);
-    p.el.style.transition='transform .7s cubic-bezier(.2,.8,.2,1) '+(i*12)+'ms';place(p,x,y);p.el.style.zIndex=++G.z;
+    p.el.style.transition=now?'':'transform .7s cubic-bezier(.2,.8,.2,1) '+(i*12)+'ms';place(p,x,y);p.el.style.zIndex=++G.z;
   });
   setTimeout(function(){G&&G.pieces.forEach(function(p){p.el.style.transition=''})},800+list.length*12);
 }
 function intro(){
   var cd=document.getElementById('pz-cd'),seq=['3','2','1','START!'],i=0;
-  cd.innerHTML='<div class="pz-cd-in"><small>完成形をおぼえてね</small><b>'+LV[G.n].nm+'</b></div>';cd.className='pz-cd show';
+  if(G.secret){G.pieces.forEach(function(p){p.el.style.opacity='0'});scatter(true)}
+  cd.innerHTML='<div class="pz-cd-in"><small>'+(G.secret?'完成するまで絵はヒミツ！':'完成形をおぼえてね')+'</small><b>'+LV[G.n].nm+'</b></div>';cd.className='pz-cd show';
   setTimeout(function step(){
     if(!G)return;
-    if(i<seq.length){cd.innerHTML='<b class="pz-num'+(i===3?' go':'')+'">'+seq[i]+'</b>';i++;if(i===3)scatter();setTimeout(step,i===4?650:800);return}
+    if(i<seq.length){cd.innerHTML='<b class="pz-num'+(i===3?' go':'')+'">'+seq[i]+'</b>';i++;if(i===3){if(G.secret)G.pieces.forEach(function(p){p.el.style.transition='opacity .5s';p.el.style.opacity='1'});else scatter()}setTimeout(step,i===4?650:800);return}
     cd.className='pz-cd';G.run=true;G.t0=performance.now();tick();
   },1400);
 }
@@ -176,7 +179,7 @@ function finish(){
   G.run=false;G.finished=true;G.t1=performance.now()-G.t0;document.getElementById('pz-time').textContent=fmt(G.t1);
   document.getElementById('pz-board').classList.add('win');confetti();
   var b=document.createElement('div');b.className='pz-win';
-  b.innerHTML='<div class="pz-win-in"><span class="pz-k">COMPLETE!!</span><b class="pz-wt">'+fmt(G.t1)+'</b><button type="button" class="pz-done-btn" data-pzform>🎉 完成！</button><small>押してランキングに登録しよう</small></div>';
+  b.innerHTML='<div class="pz-win-in"><span class="pz-k">'+(G.secret?'COMPLETE!! 正体はこれだ!!':'COMPLETE!!')+'</span><b class="pz-wt">'+fmt(G.t1)+'</b><button type="button" class="pz-done-btn" data-pzform>🎉 完成！</button><small>押してランキングに登録しよう</small></div>';
   G.L.appendChild(b);
 }
 function form(){
