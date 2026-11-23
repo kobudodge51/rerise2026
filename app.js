@@ -349,15 +349,15 @@ function saveRow(k,goNext){
 }
 /* ---------- 協賛・キッチンカー ---------- */
 var KC=[
- ['桜Diner','img/k-sakura.webp','40cmロングチュロス・チーズハットグ・ソースカツ丼・山賊焼き丼・ディッピンドッツ（アイス）など','甘いものもがっつり丼も'],
- ['お食事処 夢（ハンバーグ丼の夢mama）','img/k-yume.webp','ハンバーグ丼 など','手づくりハンバーグ'],
- ['お好み焼 4resT（ふぉれすと）','img/k-4rest.webp','鉄板焼きそば など','鉄板の焼きそば'],
+ ['桜Diner','img/k-sakura.webp','飛騨牛コロッケ 350円・チーズハットグ 600円・炙り塩豚まん 450円・山賊焼き 700円・マヨから丼 800円・フライドポテト 500円・40cmロングチュロス 600円・ディッピンドッツ 600円 など','甘いものもがっつり丼も','img/k-sakura-live.webp'],
+ ['お食事処 夢（ハンバーグ丼の夢mama）','img/k-yume.webp','ハンバーグBOX（デミグラス・トマト・てりやき）900円・スペシャルBOX 1,500円・ハンバーグ丼・ハンバーグドッグ 600円・ミニ揚げパン 300円・タピオカドリンク 600円・ドリンク 400円 など（トッピング各＋100円）','一つ一つ手作り！豆腐・おから入りのふわふわハンバーグ','img/k-yume-live.webp'],
+ ['お好み焼 4resT（ふぉれすと）','img/k-4rest.webp','豚焼そば 600円 など','鉄板で焼きたての焼そば','img/k-4rest-live.webp'],
  ['RyoTheSea','img/k-ryo.webp','プルドポークバーガー・ホットドッグ など','STANDARD HOT DOG AND BURGER'],
  ['本格手打ち そば道楽','img/k-soba.webp','本格手打ちそば など','本格手打ち']
 ];
 function viewSpon(){
   var h='<section class="sp-hero kc-hero"><small>第4回 2026 Re:RISE CUP</small><h2 class="sp-t">FOOD CORNER</h2><p>キッチンカー出店のご案内</p><p class="sp-thx">📍 <b>第3駐車場</b>に出店します。沢山食べて、さらにパワーアップ‼</p></section>';
-  h+='<div class="sp-grid kc-grid">'+KC.map(function(k,i){return '<section class="sp-card kc-card"><h3 class="sp-cat">キッチンカー '+(i+1)+'</h3><div class="kc-img"><img src="'+k[1]+'" alt="'+esc(k[0])+'のメニュー写真" loading="lazy"></div><div class="sp-co"><b>'+esc(k[0])+'</b><em>'+esc(k[3])+'</em><span>'+esc(k[2])+'</span></div></section>'}).join('')+'</div>';
+  h+='<div class="sp-grid kc-grid">'+KC.map(function(k,i){return '<section class="sp-card kc-card"><h3 class="sp-cat">キッチンカー '+(i+1)+'</h3>'+(k[4]?'<div class="kc-live"><img src="'+k[4]+'" alt="'+esc(k[0])+'の本日の様子" loading="lazy"><span>📸 本日の様子</span></div>':'')+'<div class="kc-img'+(k[4]?' sub':'')+'"><img src="'+k[1]+'" alt="'+esc(k[0])+'のメニュー写真" loading="lazy"></div><div class="sp-co"><b>'+esc(k[0])+'</b><em>'+esc(k[3])+'</em><span>'+esc(k[2])+'</span></div></section>'}).join('')+'</div>';
   h+='<div class="notice"><b>🗑 ご利用の方へお願い</b><span>ゴミはお持ち帰りいただくか、備え付けのゴミ箱に捨ててください。ゴミを捨てる場合は分別にご協力ください。</span></div>';
   h+='<div class="notice"><b>🎫 審判の皆様へ</b><span>キッチンカーで使える「500円割引チケット」を配布します。使い方は審判会議・審判控室でご案内します。</span></div>';
   h+='<p class="note" style="text-align:center">飲食は体育館の座席、または隣の「鼎文化センター」3階会議室で。アリーナ・ステージでの飲食は禁止です。</p>';
