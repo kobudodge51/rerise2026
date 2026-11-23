@@ -878,3 +878,11 @@ html.pz-on,html.pz-on body{overflow:hidden;overscroll-behavior:none}
 td.name .pfc{vertical-align:1px}
 /* 予選順位表：県チップはチーム名の下にそろえて表示 */
 td.name .pfc{display:flex;width:fit-content;margin:3px 0 0;vertical-align:0}
+/* 予選順位表：県チップは順位の下、行の高さを統一 */
+td.rk{vertical-align:middle}
+td.rk .rkn{display:block;line-height:1.1}
+td.rk .pfc{display:inline-flex;margin:3px 0 0;font-size:8.5px;padding:1px 5px .5px}
+td.name .pfc{display:none}
+td.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td.name .lnm.lg{font-size:.86em;letter-spacing:-.02em}
+.tbl-wrap table:not(.mx) tbody tr{height:54px}
