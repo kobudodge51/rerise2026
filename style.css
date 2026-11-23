@@ -886,3 +886,10 @@ td.name .pfc{display:none}
 td.name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 td.name .lnm.lg{font-size:.86em;letter-spacing:-.02em}
 .tbl-wrap table:not(.mx) tbody tr{height:54px}
+/* 予選順位表：行間を詰める */
+.tbl-wrap table:not(.mx) tbody tr{height:auto}
+.tbl-wrap table:not(.mx) tbody td{padding-top:3px;padding-bottom:3px}
+td.rk .rkn{line-height:1}
+td.rk .pfc{margin-top:2px}
+td.name .lnm.lg{font-size:.78em;letter-spacing:-.03em}
+td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
