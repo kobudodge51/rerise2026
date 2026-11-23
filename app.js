@@ -107,7 +107,9 @@ function seedLabel(code){
 function tourMatches(C){return TOUR.map(function(d){var t=C.T[d.id];return {key:'t'+d.id,kind:'tour',id:d.id,row:d.row,court:d.c,time:TTIME[d.row]||'',a:t.a,b:t.b,pa:seedLabel(d.a),pb:seedLabel(d.b),div:d.div,r:d.r,fin:d.fin}})}
 
 /* ---------- 部品 ---------- */
+var GAME_ON=(function(){try{if(/[?&]game=1/.test(location.search))localStorage.setItem('rr-game','1');return localStorage.getItem('rr-game')==='1'}catch(e){return /[?&]game=1/.test(location.search)}})();
 var ICON={
+  game:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3.2a2.3 2.3 0 1 1 4.6 0H15v3.2a2.3 2.3 0 1 1 0 4.6V20H4z"/><path d="M15 8h5v12h-5"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8 20h8M9 17h6"/></svg>',
   spon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-5 9 5v12"/><path d="M8 21v-6h8v6M3 21h18"/></svg>',
   bingo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l5 5v8l-5 5H8l-5-5V8z"/><circle cx="12" cy="12" r="3.2"/></svg>',
@@ -369,8 +371,10 @@ function render(){
   var C;try{C=compute()}catch(e){console.error(e);return}
   if(tab==='entry'&&!isAdmin())tab='login';
   var th=document.documentElement.getAttribute('data-theme');
-  var body=tab==='result'?viewResult(C):tab==='spon'?viewSpon():tab==='league'?viewLeague(C):tab==='tour'?viewTour(C):tab==='info'?viewInfo():tab==='entry'?viewEntry(C):tab==='login'?viewLogin():viewSched(C);
+  if(tab==='game'&&!GAME_ON)tab='sched';
+  var body=tab==='game'&&window.viewGame?viewGame():tab==='result'?viewResult(C):tab==='spon'?viewSpon():tab==='league'?viewLeague(C):tab==='tour'?viewTour(C):tab==='info'?viewInfo():tab==='entry'?viewEntry(C):tab==='login'?viewLogin():viewSched(C);
   var tabs=[['result','結果',ICON.trophy],['info','要項',ICON.info],['sched','試合',ICON.sched],['league','予選',ICON.league],['tour','トーナメント',ICON.tour],['spon','協賛',ICON.spon]];
+  if(GAME_ON)tabs.splice(5,0,['game','ゲーム',ICON.game]);
   if(isAdmin())tabs.push(['entry','入力',ICON.entry]);
   var y=window.scrollY,ae=document.activeElement,aid=ae&&ae.id&&/^in-/.test(ae.id)?ae.id:null,sel0=aid&&ae.selectionStart!=null?[ae.selectionStart,ae.selectionEnd]:null;
   document.body.classList.toggle('wide',tab==='entry'||tab==='spon');
@@ -467,4 +471,5 @@ else{
   document.addEventListener('visibilitychange',function(){if(!document.hidden)loadAll()});
   setInterval(function(){if(!document.hidden)loadAll()},30000);
 }
+window.RR={sb:function(){return sb},render:function(){render()},isAdmin:function(){return isAdmin()},rpc:function(f,a){return rpc(f,a)},toast:function(m){toast(m)},PREF:PREF,BLK:BLK,tab:function(){return tab},setTab:function(t){tab=t;ss('rr-tab',t)}};
 })();
