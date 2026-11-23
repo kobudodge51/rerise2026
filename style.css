@@ -973,3 +973,13 @@ td.rk{line-height:1}td.rk .pfc{display:flex;width:fit-content;margin:2px auto 0}
 .ctl-elist li input{width:100%!important;font-size:19px!important;padding:6px 2px!important}
 .ctl-elist li input.f{border-color:rgba(200,16,46,.45)}.ctl-elist li input.v{border-color:#E8B830}
 .ctl-elist .ctl-tm b{font-size:13.5px}
+/* コントロールイベント：1〜4位の発表 */
+.ctl-rank li{grid-template-columns:5.2em minmax(0,1fr);padding:10px 12px}
+.ctl-pl{font-family:var(--pop);font-size:14px;color:var(--muted);white-space:nowrap}
+.ctl-rank li.top .ctl-pl{color:#3A2A10;font-size:15px}
+.ctl-rank li.t1{padding:14px 12px;box-shadow:0 0 0 2px rgba(244,197,66,.6),0 6px 16px rgba(200,150,20,.3)}
+.ctl-rank li.t1 .ctl-tm b{font-size:19px}
+.ctl-rank .ctl-tm b{font-size:16px}
+.ctl-rank li.na .ctl-tm b{color:var(--muted);font-weight:700;font-size:13px}
+.ctl-rsel li{grid-template-columns:3.4em minmax(0,1fr)!important}
+.ctl-rsel select{width:100%;font-size:16px}

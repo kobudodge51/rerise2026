@@ -349,48 +349,27 @@ function saveRow(k,goNext){
     toast('保存しました：'+m.a+' '+a+' - '+b+' '+m.b);if(goNext)focusNext(k)}).catch(werr));
 }
 /* ---------- コントロールイベント（15球でコーンを倒した数） ---------- */
-var CTL_MAX=15;
-// 予選の本数 → 同じ本数のチームは決勝（15本）→ さらに同じならVポイントゲーム（9本）で順位を決める
-function ctlRows(){
-  var rows=BLK.A.t.map(function(n,i){var q=sc('ctl'+(i+1)),f=sc('ctlf'+(i+1));return {n:n,i:i+1,v:q?q.a:null,f:f?f.a:null,vp:f&&f.w==='v'?f.fa:null}});
-  function g(x){return x==null?-1:x}
-  rows.sort(function(x,y){if(x.v===null&&y.v===null)return x.i-y.i;if(x.v===null)return 1;if(y.v===null)return -1;return y.v-x.v||g(y.f)-g(x.f)||g(y.vp)-g(x.vp)||x.i-y.i});
-  var rk=0,prev=null;rows.forEach(function(r,k){if(r.v===null){r.rk=null;return}var key=r.v+'|'+g(r.f)+'|'+g(r.vp);if(key!==prev){rk=k+1;prev=key}r.rk=rk});
-  return rows;
-}
+/* 1位〜4位のチームだけを発表（rr26_results の ctlr1〜ctlr4 に、チーム番号を保存） */
+var CTL_N=4;
+function ctlTeam(r){var v=sc('ctlr'+r);return v&&BLK.A.t[v.a-1]||null}
 function ctlHTML(){
-  var rows=ctlRows(),done=rows.filter(function(r){return r.v!==null}).length;
-  var h='<section class="card ctl"><h2>🎯 コントロールイベント'+(done===rows.length?'<span class="done">確定</span>':'')+'</h2><p class="note">15球を投げて、何本コーンを倒せるかを競います。予選で同じ本数のチームは決勝（15球）、それでも同じときはVポイントゲーム（9本勝負）で順位を決めます。'+(done<rows.length?'（'+done+' / '+rows.length+' チーム記録済み）':'')+'</p>';
-  if(!done)return h+'<p class="ctl-empty">記録が入ると、ここに順位が表示されます。</p></section>';
-  h+='<ol class="ctl-list">'+rows.map(function(r){var top=r.rk&&r.rk<=3;
-    return '<li class="'+(top?'top t'+r.rk:'')+(r.v===null?' na':'')+'"><span class="ctl-rk">'+(r.rk?(r.rk===1?'🥇':r.rk===2?'🥈':r.rk===3?'🥉':r.rk):'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b>'+prefChip(r.n)+'</span>'+
-     (r.v===null?'<span class="ctl-v na">未記録</span>':'<span class="ctl-v"><small class="lb">予選</small><b>'+r.v+'</b><small>/'+CTL_MAX+'本</small></span>'+
-      ((r.f!=null||r.vp!=null)?'<span class="ctl-ex">'+(r.f!=null?'<span class="ctl-fx"><i>決勝</i><b>'+r.f+'</b><small>本</small></span>':'')+(r.vp!=null?'<span class="ctl-vp"><i>V</i><b>'+r.vp+'</b><small>/9</small></span>':'')+'</span>':'')+
-      '<span class="ctl-bar" aria-hidden="true"><i style="width:'+(r.v/CTL_MAX*100).toFixed(1)+'%"></i></span>')+'</li>'}).join('')+'</ol>';
-  return h+'</section>';
+  var any=false,h='',lb=['🥇 優勝','🥈 2位','🥉 3位','4位'];
+  for(var r=1;r<=CTL_N;r++){var n=ctlTeam(r);if(n)any=true;
+    h+='<li class="'+(r<=3?'top t'+r:'')+(n?'':' na')+'"><span class="ctl-pl">'+lb[r-1]+'</span><span class="ctl-tm"><b>'+(n?esc(n):'発表待ち')+'</b>'+(n?prefChip(n):'')+'</span></li>'}
+  return '<section class="card ctl"><h2>🎯 コントロールイベント</h2><p class="note">15球を投げて、何本コーンを倒せるかを競いました。</p>'+(any?'<ol class="ctl-list ctl-rank">'+h+'</ol>':'<p class="ctl-empty">結果が出ると、ここに1位〜4位が発表されます。</p>')+'</section>';
 }
 function ctlEntryHTML(){
-  var rows=ctlRows();
-  function inp(attr,val,max,lab,cls){return '<input type="number" inputmode="numeric" min="0" max="'+max+'" '+attr+' value="'+(val==null?'':val)+'" placeholder="–" aria-label="'+lab+'" class="'+cls+'">'}
-  return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note"><b>予選</b>に倒した本数（0〜15）を入れて <b>Enter</b>（スマホは「完了」）で保存。予選で同じ本数のチームだけ、<b>決勝</b>（0〜15）と、さらに同じなら <b>V</b>（0〜9）を入れてください。順位は自動で並び替わります。消すときは数字を消して Enter。</p>'+
-   '<div class="ctl-ehead" aria-hidden="true"><span></span><span>チーム</span><span>予選</span><span>決勝</span><span>V</span></div>'+
-   '<ol class="ctl-elist">'+rows.map(function(r){return '<li><span class="ctl-rk">'+(r.rk||'–')+'</span><span class="ctl-tm"><b>'+esc(r.n)+'</b></span>'+
-     inp('data-ctl="'+r.i+'" data-pre="ctl"',r.v,15,esc(r.n)+'の予選の本数','q')+inp('data-ctl="'+r.i+'" data-pre="ctlf"',r.f,15,esc(r.n)+'の決勝の本数','f')+inp('data-ctlv="'+r.i+'"',r.vp,9,esc(r.n)+'のVポイント','v')+'</li>'}).join('')+'</ol></div>';
+  var opts=function(sel){return '<option value="">（未選択）</option>'+BLK.A.t.map(function(n,i){return '<option value="'+(i+1)+'"'+(sel===n?' selected':'')+'>'+esc(n)+'</option>'}).join('')};
+  var h='';for(var r=1;r<=CTL_N;r++)h+='<li><span class="ctl-pl">'+(r===1?'優勝':r+'位')+'</span><select data-ctlr="'+r+'" class="sel" aria-label="コントロールイベント '+r+'位のチーム">'+opts(ctlTeam(r))+'</select></li>';
+  return '<div class="card ctl-ent"><h2>🎯 コントロールイベントの入力</h2><p class="note">1位〜4位のチームを選ぶと、その場で保存されて結果タブに発表されます。「（未選択）」に戻すと消えます。</p><ol class="ctl-elist ctl-rsel">'+h+'</ol></div>';
 }
-function saveCtl(el){
-  var li=el.closest('li');if(!li)return;
-  var isV=el.hasAttribute('data-ctlv');if(isV)el=li.querySelector('input[data-pre="ctlf"]');
-  var vin=li.querySelector('input[data-ctlv]'),i=+el.getAttribute('data-ctl'),pre=el.getAttribute('data-pre'),k=pre+i,t=el.value.trim(),cur=sc(k),vt=pre==='ctlf'&&vin?vin.value.trim():'';
-  if(t===''){if(isV&&vt!==''){toast('先に決勝の本数を入れてください');el.focus();return}if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(r){if(r.error)throw r.error;delete state.scores[k];render();toast('記録を消しました')}).catch(werr));return}
-  if(!/^\d{1,2}$/.test(t)||+t>CTL_MAX){toast('0〜15の数字を入れてください');el.focus();el.select();return}
-  if(vt!==''&&!/^\d$/.test(vt)){toast('Vは0〜9の数字を入れてください');vin.focus();vin.select();return}
-  var v=+t,w=vt!==''?'v|'+vt+'|0':null,curvp=cur&&cur.w==='v'?String(cur.fa):'';if(cur&&cur.a===v&&curvp===vt)return;
-  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:w}).then(function(r){if(r.error)throw r.error;state.scores[k]=parseW({a:v,b:0,w:w});render();
-    toast('保存しました：'+BLK.A.t[i-1]+'（'+(pre==='ctlf'?'決勝':'予選')+'）'+v+'本'+(vt!==''?'・V '+vt+'本':''));
-    if(pre==='ctl')setTimeout(function(){var nx=[].slice.call(document.querySelectorAll('input[data-pre="ctl"]')).filter(function(x){return x.value===''})[0];nx&&nx.focus()},60)}).catch(werr));
+function saveCtlR(el){
+  var r=+el.getAttribute('data-ctlr'),k='ctlr'+r,v=el.value,cur=sc(k);
+  if(v===''){if(!cur)return;once(rpc('rr26_delete_result',{p_key:k}).then(function(x){if(x.error)throw x.error;delete state.scores[k];render();toast((r===1?'優勝':r+'位')+'を消しました')}).catch(werr));return}
+  v=+v;if(cur&&cur.a===v)return;
+  once(rpc('rr26_save_result',{p_key:k,p_a:v,p_b:0,p_w:null}).then(function(x){if(x.error)throw x.error;state.scores[k]={a:v,b:0,w:null};render();toast('保存しました：'+(r===1?'優勝':r+'位')+' '+BLK.A.t[v-1])}).catch(werr));
 }
-document.addEventListener('keydown',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl],input[data-ctlv]')&&e.key==='Enter'){e.preventDefault();if(!busy)saveCtl(t)}});
-document.addEventListener('change',function(e){var t=e.target;if(t&&t.matches&&t.matches('input[data-ctl],input[data-ctlv]')&&!busy)saveCtl(t)});
+document.addEventListener('change',function(e){var t=e.target;if(t&&t.matches&&t.matches('select[data-ctlr]')&&!busy)saveCtlR(t)});
 /* ---------- 協賛・キッチンカー ---------- */
 var KC=[
  ['桜Diner','img/k-sakura.webp','飛騨牛コロッケ 350円・チーズハットグ 600円・炙り塩豚まん 450円・山賊焼き 700円・マヨから丼 800円・フライドポテト 500円・40cmロングチュロス 600円・ディッピンドッツ 600円 など','甘いものもがっつり丼も','img/k-sakura-live.webp'],
